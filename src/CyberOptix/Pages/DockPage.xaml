@@ -1,0 +1,156 @@
+<UserControl x:Class="CyberOptix.Pages.DockPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ctl="clr-namespace:CyberOptix.Controls">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Width="760" HorizontalAlignment="Left" Margin="24,8,24,40">
+            <TextBlock Text="Dock" Style="{StaticResource PageTitle}"/>
+            <TextBlock Text="A floating dock for your pinned and running apps. It sits above the desktop and does not replace the Windows taskbar." Style="{StaticResource PageSub}"/>
+
+            <Border Style="{StaticResource Card}">
+                <StackPanel>
+                    <CheckBox x:Name="chkDock" Content="Show the dock" Tag="Appears on your main display, and on the others if you switch on all displays below. It closes when you close CyberOptix." Click="Changed"/>
+                    <Border Style="{StaticResource Divider}"/>
+                    <ctl:SettingRow Title="Position">
+                        <ComboBox x:Name="cmbPosition" SelectionChanged="Changed">
+                            <ComboBoxItem Content="Bottom"/>
+                            <ComboBoxItem Content="Top"/>
+                        </ComboBox>
+                    </ctl:SettingRow>
+                    <Border Style="{StaticResource Divider}"/>
+                    <ctl:SettingRow Title="Dock and windows" Description="Stay on top keeps the dock in front, and when it replaces the taskbar it keeps maximized windows from going under it. Fall behind (the default) lets windows use the whole screen and cover the dock: move the pointer onto the dock (or the screen edge it sits on) to bring it forward. Stick behind covers it the same way, but the pointer does nothing: press the Windows key and the dock comes forward with the Start menu.">
+                        <ComboBox x:Name="cmbLayer" SelectionChanged="Changed" MinWidth="190">
+                            <ComboBoxItem Content="Stay On Top Of Windows"/>
+                            <ComboBoxItem Content="Fall Behind Windows (Default)"/>
+                            <ComboBoxItem Content="Stick Behind Windows"/>
+                        </ComboBox>
+                    </ctl:SettingRow>
+                    <Border Style="{StaticResource Divider}"/>
+                    <CheckBox x:Name="chkStartBottom" Content="Put the Start menu flush with the bottom of the screen" Tag="Windows leaves room under the Start menu for a taskbar, even when the dock replaces it or sits behind windows. This moves the menu down so there is no gap under it. It applies when the dock replaces the taskbar, or is set to fall or stick behind windows." Checked="Changed" Unchecked="Changed"/>
+                    <CheckBox x:Name="chkSearchBottom" Content="Put the Windows Search menu flush with the bottom of the screen" Tag="The same for the Windows Search menu (the one that opens from the search box or the Windows key + S). It applies when the dock replaces the taskbar, or is set to fall or stick behind windows." Checked="Changed" Unchecked="Changed"/>
+                    <Border Style="{StaticResource Divider}"/>
+                    <ctl:SettingRow Title="Icon size">
+                        <StackPanel Orientation="Horizontal">
+                            <Slider x:Name="sldSize" Width="200" Minimum="16" Maximum="72" TickFrequency="2" IsSnapToTickEnabled="True" ValueChanged="Changed"/>
+                            <TextBlock Text="{Binding Value, ElementName=sldSize, StringFormat={}{0:N0} px}" Width="56" TextAlignment="Right" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </ctl:SettingRow>
+                    <Border Style="{StaticResource Divider}"/>
+                    <CheckBox x:Name="chkWidgetAuto" Content="Match the system icons to the app icon size" Tag="The volume, network, clock and other icons at the right end of the dock grow and shrink with the app icons. Switch this off to pick their size yourself." Checked="Changed" Unchecked="Changed"/>
+                    <Border Style="{StaticResource Divider}"/>
+                    <ctl:SettingRow Title="System icon size" Description="The size of the volume, network, clock and other icons on the dock.">
+                        <StackPanel Orientation="Horizontal">
+                            <Slider x:Name="sldWidget" Width="200" Minimum="10" Maximum="40" TickFrequency="1" IsSnapToTickEnabled="True" ValueChanged="Changed"/>
+                            <TextBlock Text="{Binding Value, ElementName=sldWidget, StringFormat={}{0:N0} px}" Width="56" TextAlignment="Right" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </ctl:SettingRow>
+                    <Border Style="{StaticResource Divider}"/>
+                    <CheckBox x:Name="chkClockAuto" Content="Match the clock and date to the system icon size" Tag="The time and date grow and shrink with the system icons. Switch this off to pick their size yourself." Checked="Changed" Unchecked="Changed"/>
+                    <Border Style="{StaticResource Divider}"/>
+                    <ctl:SettingRow Title="Clock and date size" Description="The size of the time. The date is a little smaller.">
+                        <StackPanel Orientation="Horizontal">
+                            <Slider x:Name="sldClock" Width="200" Minimum="8" Maximum="36" TickFrequency="0.5" IsSnapToTickEnabled="True" ValueChanged="Changed"/>
+                            <TextBlock Text="{Binding Value, ElementName=sldClock, StringFormat={}{0:N1} px}" Width="56" TextAlignment="Right" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </ctl:SettingRow>
+                    <Border Style="{StaticResource Divider}"/>
+                    <CheckBox x:Name="chkRunning" Content="Show running apps" Tag="Apps that are open but not pinned appear after your pinned ones." Click="Changed"/>
+                    <Border Style="{StaticResource Divider}"/>
+                    <CheckBox x:Name="chkFullscreen" Content="Hide while a game or fullscreen app is open" Tag="Keeps the dock out of your game. It returns when you leave it." Click="Changed"/>
+                    <Border Style="{StaticResource Divider}"/>
+                    <CheckBox x:Name="chkRecycle" Content="Show the Recycle Bin" Tag="Puts the Recycle Bin on the dock. Click it to open, right-click to empty it, and drag files, folders or shortcuts onto it to delete them the normal way (you can restore them from the Recycle Bin)." Click="Changed"/>
+                    <Border Style="{StaticResource Divider}"/>
+                    <CheckBox x:Name="chkSystem" Content="Show system icons" Tag="Hidden icons, microphone, volume, network, Bluetooth, battery, USB eject and the clock, at the right end of the dock. Click one to adjust it." Click="Changed"/>
+                    <Border Style="{StaticResource Divider}"/>
+                    <CheckBox x:Name="chkGlow" Content="Border glow" Tag="A soft glow around the outside edge of the dock. With the switch below on and something playing, it takes the album cover's color; otherwise it uses the color picked below." Click="GlowChanged"/>
+                    <StackPanel x:Name="panelGlow" Margin="28,2,0,14">
+                        <CheckBox x:Name="chkGlowMedia" Content="Match the Media Player Color" Tag="While music or a video is playing, the dock's glow takes the main color of its album cover or thumbnail. Off, it always uses the glow color you pick below." Click="GlowMediaChanged" Margin="0,0,0,10"/>
+                        <WrapPanel x:Name="panelGlowColors"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                            <TextBlock Text="Glow color" VerticalAlignment="Center" Margin="0,0,12,0" Foreground="{DynamicResource TextDimBrush}"/>
+                            <TextBox x:Name="txtGlow" Width="110" Tag="#RRGGBB" KeyDown="GlowKeyDown" LostFocus="GlowLostFocus"/>
+                        </StackPanel>
+                    </StackPanel>
+                    <Border Style="{StaticResource Divider}"/>
+                    <CheckBox x:Name="chkBadges" Content="Show badges on dock apps" Tag="Puts a number on an app's icon when its window title starts with one, like (3). Windows keeps its own taskbar badges to itself, so this covers apps that show their count in the title." Checked="Changed" Unchecked="Changed"/>
+                    <Border Style="{StaticResource Divider}"/>
+                    <CheckBox x:Name="chkFlashing" Content="Show flashing on dock apps" Tag="An app's icon lights up in orange while its window is flashing to get your attention, until you open it." Checked="Changed" Unchecked="Changed"/>
+                    <Border Style="{StaticResource Divider}"/>
+                    <CheckBox x:Name="chkAllDisplays" Content="Show my dock on all displays" Tag="Adds a dock with your app icons to every other display. The Start button and system icons stay on the main dock." Checked="Changed" Unchecked="Changed"/>
+                    <Border Style="{StaticResource Divider}"/>
+                    <ctl:SettingRow Title="When using multiple displays, show my dock apps on" Description="Pinned apps are on every dock. This decides where an open window's app shows.">
+                        <ComboBox x:Name="cmbAppsOn" SelectionChanged="Changed">
+                            <ComboBoxItem Content="All docks"/>
+                            <ComboBoxItem Content="Main dock and dock where window is open"/>
+                            <ComboBoxItem Content="Dock where window is open"/>
+                        </ComboBox>
+                    </ctl:SettingRow>
+                </StackPanel>
+            </Border>
+
+            <TextBlock Text="More system icons" Style="{StaticResource SectionTitle}" Margin="0,40,0,0"/>
+            <TextBlock Text="Add shortcuts at the right end of the dock, next to volume and the clock. Each one only opens its Windows settings page or tool, and they show while Show system icons is on. The microphone and volume icons already have settings buttons in their popups." Style="{StaticResource PageSub}" Margin="0,4,0,8"/>
+            <StackPanel x:Name="panelExtras"/>
+
+            <TextBlock Text="Use the dock as my taskbar" Style="{StaticResource SectionTitle}" Margin="0,40,0,0"/>
+            <TextBlock Text="Hides the Windows taskbar and keeps windows from going behind the dock. It adds a Start button to the dock." Style="{StaticResource PageSub}" Margin="0,4,0,16"/>
+            <Border Style="{StaticResource Card}">
+                <StackPanel>
+                    <CheckBox x:Name="chkReplace" Content="Replace the Windows taskbar" Tag="Needs the dock to be on (it turns it on for you). The Windows taskbar comes back when you switch this off, close CyberOptix, or press the panic key." Click="Changed"/>
+                    <Border Style="{StaticResource Divider}"/>
+                    <CheckBox x:Name="chkFloat" Content="Let windows reach the top of the screen" Tag="Windows (and this app) use the whole screen, and the dock floats on top of them, instead of keeping a strip free for itself. Only matters while the dock replaces the taskbar and stays on top of windows." Click="Changed"/>
+                    <Border Style="{StaticResource Divider}"/>
+                    <StackPanel Orientation="Horizontal" Margin="16,14">
+                        <Button Content="Bring back the Windows taskbar now" Click="BringBackClicked"/>
+                        <TextBlock Margin="16,0,0,0" VerticalAlignment="Center" Foreground="{DynamicResource TextDimBrush}" FontSize="13">
+                            <Run Text="Panic key:"/> <Run Text="Ctrl + Alt + T" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}"/>
+                        </TextBlock>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <TextBlock Text="Pinned apps" Style="{StaticResource SectionTitle}" Margin="0,40,0,0"/>
+            <TextBlock Text="You can also right-click any app on the dock and choose Pin to dock." Style="{StaticResource PageSub}" Margin="0,4,0,16"/>
+            <Border Style="{StaticResource Card}">
+                <StackPanel>
+                    <TextBlock x:Name="txtNoPinned" Text="Nothing is pinned yet." Margin="16,14" Foreground="{DynamicResource TextDimBrush}" Visibility="Collapsed"/>
+                    <ItemsControl x:Name="lstPinned">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel>
+                                    <Grid Margin="16,10">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Image Source="{Binding Icon}" Width="30" Height="30" VerticalAlignment="Center"/>
+                                        <StackPanel Grid.Column="1" Margin="14,0" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding Name}" FontWeight="Medium"/>
+                                            <TextBlock Text="{Binding Path}" FontSize="12" Foreground="{DynamicResource TextDimBrush}" TextTrimming="CharacterEllipsis"/>
+                                        </StackPanel>
+                                        <Button Grid.Column="2" Content="Remove" MinHeight="30" Padding="14,0" Tag="{Binding Path}" Click="RemoveClicked"/>
+                                    </Grid>
+                                    <Border Style="{StaticResource Divider}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
+
+            <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
+                <Button Content="Add an app" Style="{StaticResource PrimaryButton}" Click="AddClicked"/>
+                <TextBlock x:Name="txtStatus" Foreground="{DynamicResource TextDimBrush}" FontSize="13" VerticalAlignment="Center" Margin="16,0,0,0" TextWrapping="Wrap"/>
+            </StackPanel>
+
+            <TextBlock Text="App panels" Style="{StaticResource SectionTitle}" Margin="0,44,0,0"/>
+            <TextBlock Text="Groups of app tiles that sit on your desktop. Click a tile to open that app, or jump to it if it is already open. Move a panel by dragging it." Style="{StaticResource PageSub}" Margin="0,4,0,16"/>
+            <StackPanel x:Name="panelPanels"/>
+            <StackPanel Orientation="Horizontal" Margin="0,16,0,0">
+                <Button Content="New panel" Style="{StaticResource PrimaryButton}" Click="NewPanelClicked"/>
+                <TextBlock x:Name="txtPanelStatus" Foreground="{DynamicResource TextDimBrush}" FontSize="13" VerticalAlignment="Center" Margin="16,0,0,0" TextWrapping="Wrap"/>
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

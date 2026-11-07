@@ -1,0 +1,43 @@
+# Security
+
+## Reporting a problem
+
+Please report security issues privately through GitHub: open the repository's **Security** tab and choose **Report a vulnerability**. Do not post details in a public issue. You will get a reply as soon as the maintainer can look at it.
+
+## What CyberOptix does, so you can judge the risk
+
+- **It runs as administrator.** Most of what it does (registry tweaks, services, power plans, process control) needs it. Read the source before you run it, and build it yourself with `build.ps1` if you do not want to trust a binary.
+- **It has no accounts, no telemetry and no analytics.** The only network requests are the optional weather features (the weather widget, the dock's weather icon and the weather icon on the desktop clock), which send the city you type to Open-Meteo over HTTPS, and only while one of them is on, and the optional PawnIO sensor driver install (below), which only happens when you click Install on the Monitor page and confirm. A live wallpaper can load a web address you give it, and only `https://` addresses are accepted.
+- **The files that decide what CyberOptix changes are kept where programs running as you cannot edit them.** Your settings, the backup of your original Windows settings, the list of services you stopped and the moved-shortcuts list live in `%ProgramData%\CyberOptix`. That folder is owned by Administrators and SYSTEM, and ordinary users get read-only access. On every start CyberOptix checks who owns the folder and rebuilds it if someone else created it first. Copies left by older versions in `%AppData%` are moved there once, on first run. Glass Cursor is part of CyberOptix and runs inside the same process, so its settings file lives there too, in `%ProgramData%\CyberOptix\GlassCursor`, and every value in it is clamped when read.
+- **Your settings are still treated as data, not code.** Even from that protected folder, CyberOptix does not trust the contents blindly:
+  - Restoring your original settings only touches registry keys and services CyberOptix itself changes, checks the shape of every value, and quotes everything it puts into a script.
+  - Scripts that run elevated are written to a randomly named file that is locked against changes before it runs.
+  - Hot-keys, the dock and anything else that opens a program or website do it through Explorer, so it runs as your normal user, and websites must be `http` or `https`.
+  - Native libraries are only loaded from `System32`.
+  - The Windows tools CyberOptix starts (PowerShell, `schtasks`, Explorer, Task Manager and the like) are started by their full path in the Windows folders, never by bare name, so a file planted in CyberOptix's own folder cannot stand in for them.
+- **Glass Cursor settings are shared through one file** (`%ProgramData%\CyberOptix\GlassCursor\settings.json`) that the app page and the tray menu both edit and watch. Every number is clamped to a safe range when it is read, colours are checked, and a half-written file is ignored. While a keybind box in the app is listening, a named object tells Glass Cursor to pause its hotkeys; it vanishes if CyberOptix closes. Glass Cursor runs on its own thread inside CyberOptix, so it has the same administrator rights as the app. It is no longer a separate program that gets unpacked into your profile and launched from there.
+- **Starting with Windows uses a scheduled task, and it runs CyberOptix as administrator.** Because CyberOptix needs administrator rights, Windows will not start it silently from the usual Run entry, so CyberOptix registers a task named `CyberOptix` that starts it a few seconds after you sign in (with the highest rights, for your account only, passing `--startup`). It is on by default and can be switched off under Settings, Startup, which removes the task; the uninstaller removes it too. Anything that can replace `CyberOptix.exe` would be run as administrator at your next sign-in, so keep CyberOptix in a folder only administrators can change, such as `C:\Program Files`. CyberOptix checks the folder's permissions and says so on the Settings page when ordinary programs could change it.
+- **Free up resources is opt-in and reversible.** It scans for what could be stopped, ticks nothing for you, never lists security software, drivers, audio or anti-cheat, honors your Never kill list, and saves service start modes so they can be restored.
+- **The uninstaller refuses to delete** a drive root, a Windows or personal folder, or one that is far bigger than an install.
+- **It does not log keys or watch what you type.** The only input hooks are in Glass Cursor: a low-level mouse hook that sees the wheel and the right button so the zoom lens works, and checks of the Ctrl and Alt keys to go with it. The few key presses CyberOptix sends itself are the same ones you would press: the Windows key (when you click the dock's Start button), Win + B and Enter (to open the hidden-icons panel from the dock) and Win + W (to open Windows' Widgets when you click that icon). Nothing is recorded, stored or sent anywhere.
+- **Your own clock themes are data, not code.** A theme added with the + tile on the Desktop Clock page is a small JSON file. CyberOptix reads at most 8 KB, keeps only letters and digits in names and fonts, clamps every size, checks the date pattern, and saves its own clean copy in `%ProgramData%\CyberOptix\ClockThemes` (administrators only). Nothing in a theme file is ever run.
+- **The default settings hold nothing personal.** They are built into the app (`Assets/DefaultSettings.json`) and are used on a first run and by the "Reset to default" buttons. They contain no folders, program paths, city, games or hardware names.
+- **The uninstaller starts system programs by their full path** (`schtasks`, `cmd`, and winget from its own folder), never by a bare name that a file placed next to it could take over.
+- **The Recycle Bin on the dock refuses system places.** Files dropped on it go to the Recycle Bin the normal way, but anything under the Windows folder, Program Files, ProgramData, the Recycle Bin itself, System Volume Information or another user's profile is ignored. CyberOptix runs as administrator, and without this a drop made by some other program could delete files its own user could not.
+- **The hardware makers' icons only open apps.** The dock's "Hardware software" icons (MSI Center, Armoury Crate, iCUE and so on) look in the Start menu for apps with those names and open them through Explorer, as you. CyberOptix never changes their settings and does not read anything else from them.
+- **A live wallpaper from a web address runs a web page inside an administrator process.** It is locked down (only `https://` pages, no pop-up windows, no scripts talking to CyberOptix, no saved passwords or autofill), but it is still a web page, so only use addresses you trust, or use a video or GIF instead.
+- **Hardware sensors** are read with LibreHardwareMonitor, which can load a signed low-level driver while CyberOptix runs. That is how fan speeds and temperatures are read, and it is the reason administrator rights are needed for them.
+
+## Supported versions
+
+Only the latest commit on `main` is maintained.
+
+## The PawnIO sensor driver (optional)
+
+Reading the CPU temperature and some fan sensors needs a kernel driver. CyberOptix uses PawnIO (a signed, freeware driver by namazso, https://pawnio.eu) for that, and does **not** install it on its own. The Monitor page offers an *Install the PawnIO sensor driver* button when sensors are missing. Clicking it shows what will happen and asks you to confirm; then it runs Windows' package manager once, with fixed arguments (winget install --id namazso.PawnIO --exact --source winget), so the driver comes from winget's official source with its checksum verified. The driver is shared by the whole PC. Remove it in Windows Settings, Installed apps, or with winget uninstall namazso.PawnIO. Uninstalling CyberOptix leaves it in place by default, because other programs may use it; the uninstaller has an unticked *PawnIO sensor driver* item that removes it through winget when you choose to.
+
+
+## The desktop right-click items (optional)
+
+So widgets can be unlocked from the desktop, CyberOptix adds two items to the desktop wallpaper's right-click menu (*Unlock Widgets* / *Lock Widgets*, and *Restore Widgets Placing*). They are written for your user only (under HKCU\Software\Classes\DesktopBackground\Shell), run a short script kept in the administrator-only data folder, and the script passes one of four fixed words (unlock, lock, toggle, restore) to a named pipe that only your user can open. It cannot run anything else. Switch them off on the Widgets page, and the uninstaller removes them.
+

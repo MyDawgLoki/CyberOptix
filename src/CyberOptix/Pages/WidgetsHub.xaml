@@ -1,0 +1,15 @@
+<UserControl x:Class="CyberOptix.Pages.WidgetsHub"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:pages="clr-namespace:CyberOptix.Pages">
+    <!-- One page for everything about desktop widgets: where they sit on your screens, then their settings. -->
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Width="760" HorizontalAlignment="Left" Margin="24,8,24,40">
+            <TextBlock Text="Widgets" Style="{StaticResource PageTitle}"/>
+            <TextBlock Text="Put widgets on your screens, and set how they look." Style="{StaticResource PageSub}"/>
+
+            <pages:WidgetPlacement x:Name="pgPlacement"/>
+            <pages:WidgetsPage x:Name="pgWidgets"/>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

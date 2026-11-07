@@ -1,0 +1,182 @@
+<UserControl x:Class="CyberOptix.Pages.SettingsPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ctl="clr-namespace:CyberOptix.Controls">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Width="720" HorizontalAlignment="Left" Margin="24,8,24,24">
+            <TextBlock Text="App Settings" Style="{StaticResource PageTitle}"/>
+            <TextBlock Text="Change how CyberOptix itself looks. Changes apply instantly and are remembered." Style="{StaticResource PageSub}"/>
+
+            <TextBlock Text="Accent color" Style="{StaticResource GroupTitle}" Margin="4,0,0,10"/>
+            <Border Style="{StaticResource Card}">
+                <StackPanel>
+                    <CheckBox x:Name="chkMatchAccent" Content="Match the Media Player Color" Tag="While music or a video is playing, the accent color becomes the main color of its album cover or thumbnail. Nothing changes until something starts playing, and it goes back when it stops." Click="MatchMediaChanged"/>
+                    <Border Style="{StaticResource Divider}"/>
+                    <ctl:SettingRow Title="Color" Description="Used for switches, sliders, buttons and the selected item. Turquoise is the default.">
+                        <WrapPanel x:Name="panelAccents" MaxWidth="260" HorizontalAlignment="Right"/>
+                    </ctl:SettingRow>
+                    <Border Style="{StaticResource Divider}"/>
+                    <ctl:SettingRow Title="Custom color" Description="Any hex color, for example #FF6B35. Press Enter to apply.">
+                        <TextBox x:Name="txtAccent" Width="140" Tag="#RRGGBB" KeyDown="AccentKeyDown" LostFocus="AccentLostFocus"/>
+                    </ctl:SettingRow>
+                </StackPanel>
+            </Border>
+
+            <TextBlock Text="Window" Style="{StaticResource GroupTitle}"/>
+            <Border Style="{StaticResource Card}">
+                <StackPanel>
+                    <CheckBox x:Name="chkMatchWindow" Content="Match the Media Player Color" Tag="While music or a video is playing, the window color becomes a deep shade of its album cover color. Nothing changes until something starts playing, and it goes back when it stops." Click="MatchMediaChanged"/>
+                    <Border Style="{StaticResource Divider}"/>
+                    <ctl:SettingRow Title="Background color" Description="Graphite is the default.">
+                        <WrapPanel x:Name="panelTints" MaxWidth="260" HorizontalAlignment="Right"/>
+                    </ctl:SettingRow>
+                    <Border Style="{StaticResource Divider}"/>
+                    <ctl:SettingRow Title="Background style" Description="Acrylic and Mica blur what is behind the window (Windows 11). Solid turns the blur off, and is the only style on Windows 10.">
+                        <ComboBox x:Name="cmbBackdrop" SelectionChanged="BackdropChanged"/>
+                    </ctl:SettingRow>
+                    <Border Style="{StaticResource Divider}"/>
+                    <ctl:SettingRow Title="Glass tint" Description="Higher is darker and more solid. Lower lets your wallpaper show through.">
+                        <StackPanel Orientation="Horizontal">
+                            <Slider x:Name="sldGlass" Width="200" Minimum="0.25" Maximum="0.95" ValueChanged="SlidersChanged"/>
+                            <TextBlock Text="{Binding Value, ElementName=sldGlass, StringFormat=P0}" Width="48" TextAlignment="Right" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </ctl:SettingRow>
+                    <Border Style="{StaticResource Divider}"/>
+                    <ctl:SettingRow Title="Window opacity" Description="Fades the whole window, text included. Keep it above 70% to stay readable.">
+                        <StackPanel Orientation="Horizontal">
+                            <Slider x:Name="sldOpacity" Width="200" Minimum="0.5" Maximum="1" ValueChanged="SlidersChanged"/>
+                            <TextBlock Text="{Binding Value, ElementName=sldOpacity, StringFormat=P0}" Width="48" TextAlignment="Right" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </ctl:SettingRow>
+                </StackPanel>
+            </Border>
+
+            <TextBlock Text="Text" Style="{StaticResource GroupTitle}"/>
+            <Border Style="{StaticResource Card}">
+                <StackPanel>
+                    <CheckBox x:Name="chkMatchText" Content="Match the Media Player Color" Tag="While music or a video is playing, the text takes a pale tint of its album cover color. Nothing changes until something starts playing, and it goes back when it stops." Click="MatchMediaChanged"/>
+                    <Border Style="{StaticResource Divider}"/>
+                    <ctl:SettingRow Title="Font color" Description="The color of text across the app. Dimmer text is a softer shade of it. White is the default.">
+                        <WrapPanel x:Name="panelFonts" MaxWidth="260" HorizontalAlignment="Right"/>
+                    </ctl:SettingRow>
+                    <Border Style="{StaticResource Divider}"/>
+                    <ctl:SettingRow Title="Custom font color" Description="Any hex color. Press Enter to apply. Keep it light on dark backgrounds.">
+                        <TextBox x:Name="txtFont" Width="140" Tag="#RRGGBB" KeyDown="FontKeyDown" LostFocus="FontLostFocus"/>
+                    </ctl:SettingRow>
+                </StackPanel>
+            </Border>
+
+            <TextBlock Text="Glass cards" Style="{StaticResource GroupTitle}"/>
+            <Border Style="{StaticResource Card}">
+                <StackPanel>
+                    <CheckBox x:Name="chkMatchMedia" Content="Match the Media Player Color" Tag="While music or a video is playing, the glass cards take the main color of its album cover or thumbnail. Off, or when nothing is playing, they use the colors below." Click="MatchMediaChanged"/>
+                    <Border Style="{StaticResource Divider}"/>
+                    <ctl:SettingRow Title="Card color" Description="The glass behind each group of settings. Used when nothing is playing, or when matching the media player is off.">
+                        <WrapPanel x:Name="panelCards" MaxWidth="260" HorizontalAlignment="Right"/>
+                    </ctl:SettingRow>
+                    <Border Style="{StaticResource Divider}"/>
+                    <ctl:SettingRow Title="Custom card color" Description="Any hex color. Press Enter to apply.">
+                        <TextBox x:Name="txtCard" Width="140" Tag="#RRGGBB" KeyDown="CardKeyDown" LostFocus="CardLostFocus"/>
+                    </ctl:SettingRow>
+                    <Border Style="{StaticResource Divider}"/>
+                    <ctl:SettingRow Title="Card opacity" Description="0% makes the cards fully see-through. Higher makes them solid.">
+                        <StackPanel Orientation="Horizontal">
+                            <Slider x:Name="sldCard" Width="200" Minimum="0" Maximum="0.6" ValueChanged="CardOpacityChanged"/>
+                            <TextBlock Text="{Binding Value, ElementName=sldCard, StringFormat=P0}" Width="48" TextAlignment="Right" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </ctl:SettingRow>
+                </StackPanel>
+            </Border>
+
+            <TextBlock Text="Window glow" Style="{StaticResource GroupTitle}"/>
+            <Border Style="{StaticResource Card}">
+                <StackPanel>
+                    <CheckBox x:Name="chkWindowGlow" Content="Glowing edges" Tag="A soft glow round the edge of the CyberOptix window and the widget windows. With the switch below on, it takes the album cover's color while something is playing; with it off, it always uses the glow color you pick." Click="WindowGlowChanged"/>
+                    <Border Style="{StaticResource Divider}"/>
+                    <CheckBox x:Name="chkMatchGlow" Content="Match the Media Player Color" Tag="While music or a video is playing, the glowing edge takes the main color of its album cover or thumbnail. Off, it always uses the glow color below." Click="MatchMediaChanged"/>
+                    <Border Style="{StaticResource Divider}"/>
+                    <ctl:SettingRow Title="Glow color" Description="Used when nothing is playing, or when matching the media player is off.">
+                        <WrapPanel x:Name="panelWindowGlow" MaxWidth="260" HorizontalAlignment="Right"/>
+                    </ctl:SettingRow>
+                    <Border Style="{StaticResource Divider}"/>
+                    <ctl:SettingRow Title="Custom glow color" Description="Any hex color. Press Enter to apply.">
+                        <TextBox x:Name="txtWindowGlow" Width="140" Tag="#RRGGBB" KeyDown="WindowGlowKeyDown" LostFocus="WindowGlowLostFocus"/>
+                    </ctl:SettingRow>
+                </StackPanel>
+            </Border>
+
+            <Button Content="Reset colors to the defaults" HorizontalAlignment="Left" Margin="0,18,0,0" Click="ResetColorsClicked"
+                    ToolTip="Turquoise accent, Graphite window, white text and white glass cards, each matching the media player"/>
+
+            <TextBlock Text="Background picture" Style="{StaticResource GroupTitle}"/>
+            <Border Style="{StaticResource Card}">
+                <StackPanel>
+                    <CheckBox x:Name="chkBackground" Content="Show a picture behind the app" Tag="The CyberOptix wallpaper by default. Cards and text stay on top of it." Click="BackgroundChanged"/>
+                    <Border Style="{StaticResource Divider}"/>
+                    <CheckBox x:Name="chkBackgroundVideo" Content="Animate the CyberOptix wallpaper" Tag="Plays a silent video of the wallpaper on a seamless loop. It stops while the window is minimized or in the tray. Choosing your own picture replaces it." Click="BackgroundVideoChanged"/>
+                    <Border Style="{StaticResource Divider}"/>
+                    <ctl:SettingRow Title="Picture opacity" Description="Lower makes the picture more see-through. 100% shows it fully.">
+                        <StackPanel Orientation="Horizontal">
+                            <Slider x:Name="sldPicture" Width="200" Minimum="0.03" Maximum="1" ValueChanged="PictureStrengthChanged"/>
+                            <TextBlock Text="{Binding Value, ElementName=sldPicture, StringFormat=P0}" Width="48" TextAlignment="Right" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </ctl:SettingRow>
+                    <Border Style="{StaticResource Divider}"/>
+                    <ctl:SettingRow x:Name="rowPicture" Title="Picture">
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="Choose a picture" Click="ChoosePictureClicked"/>
+                            <Button Content="Use the CyberOptix wallpaper" Margin="10,0,0,0" Click="DefaultPictureClicked"/>
+                        </StackPanel>
+                    </ctl:SettingRow>
+                </StackPanel>
+            </Border>
+
+            <TextBlock Text="Startup" Style="{StaticResource GroupTitle}"/>
+            <Border Style="{StaticResource Card}">
+                <StackPanel>
+                    <CheckBox x:Name="chkStartWithWindows" Content="Start CyberOptix when I sign in to Windows" Tag="Brings your dock, widgets, Glass Cursor and hotkeys up a few seconds after you sign in. CyberOptix needs administrator rights, so this uses a Windows scheduled task named CyberOptix, which starts it without a permission prompt each time. Switch this off to remove the task." Checked="StartWithWindowsChanged" Unchecked="StartWithWindowsChanged"/>
+                    <Border Style="{StaticResource Divider}"/>
+                    <CheckBox x:Name="chkStartQuietly" Content="Start quietly in the system tray" Tag="Does not open the CyberOptix window when it starts with Windows. Open it from the tray icon whenever you like. Switch this off to see the window at every sign-in." Checked="StartQuietlyChanged" Unchecked="StartQuietlyChanged"/>
+                    <TextBlock x:Name="txtStartupNote" Style="{StaticResource Note}" Margin="16,2,16,14" TextWrapping="Wrap" Visibility="Collapsed"/>
+                </StackPanel>
+            </Border>
+
+            <TextBlock Text="Closing and minimizing" Style="{StaticResource GroupTitle}"/>
+            <Border Style="{StaticResource Card}">
+                <StackPanel>
+                    <CheckBox x:Name="chkCloseToTray" Content="Keep running in the system tray when I close the window" Tag="Glass Cursor, its hotkeys, the dock and the widgets keep working. Use the tray icon to open CyberOptix again or exit it. Switch this off to quit completely when you close the window." Checked="CloseToTrayChanged" Unchecked="CloseToTrayChanged"/>
+                    <Border Style="{StaticResource Divider}"/>
+                    <ctl:SettingRow Title="When I minimize CyberOptix, send it to" Description="The dock puts a CyberOptix icon on the dock to bring it back, and needs the dock to be on. The system tray uses the CyberOptix tray icon. If either is not available, it minimizes to the taskbar as usual.">
+                        <ComboBox x:Name="cmbMinimizeTo" SelectionChanged="MinimizeToChanged">
+                            <ComboBoxItem Content="The taskbar"/>
+                            <ComboBoxItem Content="The dock"/>
+                            <ComboBoxItem Content="The system tray"/>
+                        </ComboBox>
+                    </ctl:SettingRow>
+                </StackPanel>
+            </Border>
+
+            <TextBlock Text="Restore and uninstall" Style="{StaticResource GroupTitle}"/>
+            <Border Style="{StaticResource Card}">
+                <StackPanel>
+                    <ctl:SettingRow Title="Restore original Windows settings" Description="CyberOptix saved how Windows was set up before it first changed anything. This puts that back: the tweaks you applied, services you stopped, display colors and rotation, key remaps (after restarting your PC), pointer speed, cursors and scrolling. CyberOptix restarts afterward.">
+                        <Button x:Name="btnRestore" Content="Restore" Click="RestoreClicked"/>
+                    </ctl:SettingRow>
+                    <CheckBox x:Name="chkKeepWindows" Content="Do not change my original Windows settings when CyberOptix relaunches" Tag="When this is on, CyberOptix puts nothing back onto Windows at launch (for example the display colors you set), so Windows stays exactly as it is. Your Windows settings are only changed when you press a button that says so. The saved copy of your original settings is never replaced." Click="KeepWindowsChanged"/>
+                    <Border Style="{StaticResource Divider}"/>
+                    <ctl:SettingRow x:Name="rowPawnIo" Title="PawnIO sensor driver" Description="The driver CyberOptix can install to read your CPU temperature. It is shared by the whole PC, so other programs that read sensors through it will lose those readings. Removing it uses Windows' package manager (winget).">
+                        <Button x:Name="btnRemovePawnIo" Content="Remove" Click="RemovePawnIoClicked"/>
+                    </ctl:SettingRow>
+                    <ctl:SettingRow Title="Uninstall CyberOptix" Description="Opens the uninstaller. It asks before it removes anything. It can first put your Windows settings back to how they were before CyberOptix (tweaks, stopped services, display colors, key remaps, mouse settings). It also closes CyberOptix, moves every shortcut, file and folder from the Apps panel back to your desktop, and deletes this app's folder. Your games and files are not touched.">
+                        <Button x:Name="btnUninstall" Content="Uninstall" Click="UninstallClicked"/>
+                    </ctl:SettingRow>
+                </StackPanel>
+            </Border>
+
+            <StackPanel Orientation="Horizontal" Margin="0,24,0,0">
+                <Button Content="Reset to default look" Click="ResetClicked"/>
+                <TextBlock x:Name="txtStatus" Foreground="{DynamicResource TextDimBrush}" FontSize="13" VerticalAlignment="Center" Margin="16,0,0,0"/>
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

@@ -1,0 +1,133 @@
+<UserControl x:Class="CyberOptix.Pages.WindowManagerPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ctl="clr-namespace:CyberOptix.Controls">
+    <UserControl.Resources>
+        <!-- Text style for the label inside each key cap. -->
+        <Style x:Key="ShortcutKey" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+        </Style>
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Width="720" HorizontalAlignment="Left" Margin="24,8,24,24">
+            <TextBlock Text="Window Manager" Style="{StaticResource PageTitle}"/>
+            <TextBlock Text="Snap the focused window with a hotkey, or tile every window at once." Style="{StaticResource PageSub}"/>
+
+            <Border Style="{StaticResource Card}">
+                <StackPanel>
+                    <CheckBox x:Name="chkHotkeys" Content="Snapping hotkeys" Tag="Active while CyberOptix is running." Click="HotkeysClicked"/>
+                    <Border Style="{StaticResource Divider}"/>
+                    <ctl:SettingRow Title="Gap between windows">
+                        <StackPanel Orientation="Horizontal">
+                            <Slider x:Name="sldGap" Width="220" Minimum="0" Maximum="40" TickFrequency="1" IsSnapToTickEnabled="True" ValueChanged="GapChanged"/>
+                            <TextBlock Text="{Binding Value, ElementName=sldGap, StringFormat={}{0:N0} px}" Width="52" TextAlignment="Right" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </ctl:SettingRow>
+                </StackPanel>
+            </Border>
+
+            <TextBlock Text="Shortcuts" Style="{StaticResource GroupTitle}"/>
+            <Border Style="{StaticResource Card}" Padding="10">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="28"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Margin="6">
+                        <Grid Margin="0,6">
+                            <StackPanel Orientation="Horizontal">
+                                <Border Style="{StaticResource KeyCap}"><TextBlock Text="Ctrl" Style="{StaticResource ShortcutKey}"/></Border>
+                                <Border Style="{StaticResource KeyCap}"><TextBlock Text="Alt" Style="{StaticResource ShortcutKey}"/></Border>
+                                <Border Style="{StaticResource KeyCap}"><TextBlock Text="←" Style="{StaticResource ShortcutKey}"/></Border>
+                            </StackPanel>
+                            <TextBlock Text="Left half" HorizontalAlignment="Right" Foreground="{DynamicResource TextDimBrush}" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                        </Grid>
+                        <Grid Margin="0,6">
+                            <StackPanel Orientation="Horizontal">
+                                <Border Style="{StaticResource KeyCap}"><TextBlock Text="Ctrl" Style="{StaticResource ShortcutKey}"/></Border>
+                                <Border Style="{StaticResource KeyCap}"><TextBlock Text="Alt" Style="{StaticResource ShortcutKey}"/></Border>
+                                <Border Style="{StaticResource KeyCap}"><TextBlock Text="→" Style="{StaticResource ShortcutKey}"/></Border>
+                            </StackPanel>
+                            <TextBlock Text="Right half" HorizontalAlignment="Right" Foreground="{DynamicResource TextDimBrush}" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                        </Grid>
+                        <Grid Margin="0,6">
+                            <StackPanel Orientation="Horizontal">
+                                <Border Style="{StaticResource KeyCap}"><TextBlock Text="Ctrl" Style="{StaticResource ShortcutKey}"/></Border>
+                                <Border Style="{StaticResource KeyCap}"><TextBlock Text="Alt" Style="{StaticResource ShortcutKey}"/></Border>
+                                <Border Style="{StaticResource KeyCap}"><TextBlock Text="↑" Style="{StaticResource ShortcutKey}"/></Border>
+                            </StackPanel>
+                            <TextBlock Text="Top half" HorizontalAlignment="Right" Foreground="{DynamicResource TextDimBrush}" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                        </Grid>
+                        <Grid Margin="0,6">
+                            <StackPanel Orientation="Horizontal">
+                                <Border Style="{StaticResource KeyCap}"><TextBlock Text="Ctrl" Style="{StaticResource ShortcutKey}"/></Border>
+                                <Border Style="{StaticResource KeyCap}"><TextBlock Text="Alt" Style="{StaticResource ShortcutKey}"/></Border>
+                                <Border Style="{StaticResource KeyCap}"><TextBlock Text="↓" Style="{StaticResource ShortcutKey}"/></Border>
+                            </StackPanel>
+                            <TextBlock Text="Bottom half" HorizontalAlignment="Right" Foreground="{DynamicResource TextDimBrush}" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                        </Grid>
+                        <Grid Margin="0,6">
+                            <StackPanel Orientation="Horizontal">
+                                <Border Style="{StaticResource KeyCap}"><TextBlock Text="Ctrl" Style="{StaticResource ShortcutKey}"/></Border>
+                                <Border Style="{StaticResource KeyCap}"><TextBlock Text="Alt" Style="{StaticResource ShortcutKey}"/></Border>
+                                <Border Style="{StaticResource KeyCap}"><TextBlock Text="Enter" Style="{StaticResource ShortcutKey}"/></Border>
+                            </StackPanel>
+                            <TextBlock Text="Maximize" HorizontalAlignment="Right" Foreground="{DynamicResource TextDimBrush}" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                        </Grid>
+                    </StackPanel>
+                    <StackPanel Grid.Column="2" Margin="6,6,18,6">
+                        <Grid Margin="0,6">
+                            <StackPanel Orientation="Horizontal">
+                                <Border Style="{StaticResource KeyCap}"><TextBlock Text="Ctrl" Style="{StaticResource ShortcutKey}"/></Border>
+                                <Border Style="{StaticResource KeyCap}"><TextBlock Text="Alt" Style="{StaticResource ShortcutKey}"/></Border>
+                                <Border Style="{StaticResource KeyCap}"><TextBlock Text="C" Style="{StaticResource ShortcutKey}"/></Border>
+                            </StackPanel>
+                            <TextBlock Text="Center" HorizontalAlignment="Right" Foreground="{DynamicResource TextDimBrush}" VerticalAlignment="Center"/>
+                        </Grid>
+                        <Grid Margin="0,6">
+                            <StackPanel Orientation="Horizontal">
+                                <Border Style="{StaticResource KeyCap}"><TextBlock Text="Ctrl" Style="{StaticResource ShortcutKey}"/></Border>
+                                <Border Style="{StaticResource KeyCap}"><TextBlock Text="Alt" Style="{StaticResource ShortcutKey}"/></Border>
+                                <Border Style="{StaticResource KeyCap}"><TextBlock Text="1" Style="{StaticResource ShortcutKey}"/></Border>
+                            </StackPanel>
+                            <TextBlock Text="Top left" HorizontalAlignment="Right" Foreground="{DynamicResource TextDimBrush}" VerticalAlignment="Center"/>
+                        </Grid>
+                        <Grid Margin="0,6">
+                            <StackPanel Orientation="Horizontal">
+                                <Border Style="{StaticResource KeyCap}"><TextBlock Text="Ctrl" Style="{StaticResource ShortcutKey}"/></Border>
+                                <Border Style="{StaticResource KeyCap}"><TextBlock Text="Alt" Style="{StaticResource ShortcutKey}"/></Border>
+                                <Border Style="{StaticResource KeyCap}"><TextBlock Text="2" Style="{StaticResource ShortcutKey}"/></Border>
+                            </StackPanel>
+                            <TextBlock Text="Top right" HorizontalAlignment="Right" Foreground="{DynamicResource TextDimBrush}" VerticalAlignment="Center"/>
+                        </Grid>
+                        <Grid Margin="0,6">
+                            <StackPanel Orientation="Horizontal">
+                                <Border Style="{StaticResource KeyCap}"><TextBlock Text="Ctrl" Style="{StaticResource ShortcutKey}"/></Border>
+                                <Border Style="{StaticResource KeyCap}"><TextBlock Text="Alt" Style="{StaticResource ShortcutKey}"/></Border>
+                                <Border Style="{StaticResource KeyCap}"><TextBlock Text="3" Style="{StaticResource ShortcutKey}"/></Border>
+                            </StackPanel>
+                            <TextBlock Text="Bottom left" HorizontalAlignment="Right" Foreground="{DynamicResource TextDimBrush}" VerticalAlignment="Center"/>
+                        </Grid>
+                        <Grid Margin="0,6">
+                            <StackPanel Orientation="Horizontal">
+                                <Border Style="{StaticResource KeyCap}"><TextBlock Text="Ctrl" Style="{StaticResource ShortcutKey}"/></Border>
+                                <Border Style="{StaticResource KeyCap}"><TextBlock Text="Alt" Style="{StaticResource ShortcutKey}"/></Border>
+                                <Border Style="{StaticResource KeyCap}"><TextBlock Text="4" Style="{StaticResource ShortcutKey}"/></Border>
+                            </StackPanel>
+                            <TextBlock Text="Bottom right" HorizontalAlignment="Right" Foreground="{DynamicResource TextDimBrush}" VerticalAlignment="Center"/>
+                        </Grid>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <StackPanel Orientation="Horizontal" Margin="0,24,0,0">
+                <Button Content="Tile all windows" Style="{StaticResource PrimaryButton}" Click="TileClicked"/>
+                <TextBlock x:Name="txtStatus" Foreground="{DynamicResource TextDimBrush}" FontSize="13" VerticalAlignment="Center" Margin="16,0,0,0" TextWrapping="Wrap"/>
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

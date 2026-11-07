@@ -1,0 +1,17 @@
+<UserControl x:Class="CyberOptix.Pages.DisplayHub"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:pages="clr-namespace:CyberOptix.Pages">
+    <!-- One page: every display setting stacked in sections, in a single scroll. -->
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Width="760" HorizontalAlignment="Left" Margin="24,8,24,40">
+            <TextBlock Text="Display" Style="{StaticResource PageTitle}"/>
+            <TextBlock Text="Your screens, wallpapers, live wallpaper and desktop clock in one place." Style="{StaticResource PageSub}"/>
+
+            <pages:DisplayPage x:Name="pgScreens"/>
+            <pages:WallpaperPage x:Name="pgWallpaper"/>
+            <pages:DesktopClockPage x:Name="pgClock"/>
+            <pages:LiveWallpaperPage x:Name="pgLive"/>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

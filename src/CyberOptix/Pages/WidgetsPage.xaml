@@ -1,0 +1,79 @@
+<UserControl x:Class="CyberOptix.Pages.WidgetsPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ctl="clr-namespace:CyberOptix.Controls">
+        <StackPanel Margin="0,0,0,0">
+            <TextBlock Text="Widget settings" Style="{StaticResource SectionTitle}"/>
+            <TextBlock Text="Which widgets are on, the weather, and how they look. They stay up while CyberOptix is running." Style="{StaticResource PageSub}"/>
+
+            <TextBlock Text="Desktop widgets" Style="{StaticResource GroupTitle}" Margin="4,0,0,10"/>
+            <Border Style="{StaticResource Card}">
+                <StackPanel>
+                    <CheckBox x:Name="chkClock" Content="Clock" Tag="Large time and date." Click="Changed"/>
+                    <Border Style="{StaticResource Divider}"/>
+                    <CheckBox x:Name="chkWeather" Content="Weather" Tag="Current conditions and a 5-day forecast." Click="Changed"/>
+                    <Border Style="{StaticResource Divider}"/>
+                    <CheckBox x:Name="chkMediaAuto" Content="Show the media player when something plays" Tag="The media player appears on the desktop by itself when music or a video starts in an app or a browser, and stays until you close it. Closing it with its x turns this off; turn it on again here." Click="Changed"/>
+                    <Border Style="{StaticResource Divider}"/>
+                    <CheckBox x:Name="chkMedia" Content="Media controls" Tag="Album art, track info and play/pause/skip for whatever is playing in Spotify, Apple Music, YouTube, SoundCloud, Suno and more." Click="Changed"/>
+                </StackPanel>
+            </Border>
+
+            <TextBlock Text="Media player icons" Style="{StaticResource GroupTitle}"/>
+            <Border Style="{StaticResource Card}">
+                <StackPanel>
+                    <TextBlock Style="{StaticResource Note}" Margin="2,0,0,8" Text="Choose which service buttons the media player shows under its controls. Each opens the app if you have it, otherwise the website."/>
+                    <StackPanel x:Name="panelMediaIcons"/>
+                </StackPanel>
+            </Border>
+
+            <TextBlock Text="Weather" Style="{StaticResource GroupTitle}"/>
+            <Border Style="{StaticResource Card}">
+                <StackPanel>
+                    <ctl:SettingRow Title="City" Description="Press Enter or Set to update.">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBox x:Name="txtCity" Width="200" Tag="City name" KeyDown="CityKeyDown"/>
+                            <Button Content="Set" Margin="8,0,0,0" Click="SetCityClicked"/>
+                        </StackPanel>
+                    </ctl:SettingRow>
+                    <Border Style="{StaticResource Divider}"/>
+                    <ctl:SettingRow Title="Units">
+                        <ComboBox x:Name="cmbUnits" SelectionChanged="Changed">
+                            <ComboBoxItem Content="Fahrenheit (°F, mph)"/>
+                            <ComboBoxItem Content="Celsius (°C, km/h)"/>
+                        </ComboBox>
+                    </ctl:SettingRow>
+                </StackPanel>
+            </Border>
+
+            <TextBlock Text="Appearance" Style="{StaticResource GroupTitle}"/>
+            <Border Style="{StaticResource Card}">
+                <StackPanel>
+                    <ctl:SettingRow Title="Opacity">
+                        <StackPanel Orientation="Horizontal">
+                            <Slider x:Name="sldOpacity" Width="220" Minimum="0.3" Maximum="1" Value="0.9" ValueChanged="Changed"/>
+                            <TextBlock Text="{Binding Value, ElementName=sldOpacity, StringFormat=P0}" Width="48" TextAlignment="Right" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </ctl:SettingRow>
+                    <Border Style="{StaticResource Divider}"/>
+                    <CheckBox x:Name="chkOnTop" Content="Keep widgets above other windows" Click="Changed"/>
+                </StackPanel>
+            </Border>
+
+            <TextBlock Text="Gaming" Style="{StaticResource GroupTitle}"/>
+            <Border Style="{StaticResource Card}">
+                <StackPanel>
+                    <CheckBox x:Name="chkShowBrowser" Content="Show widget windows when a browser window is focused" Tag="Keeps the desktop widgets on screen while a web browser is the window you are using, including a browser playing a video fullscreen. Turn it off to hide them whenever a browser is in front. On by default." Click="Changed"/>
+                    <Border Style="{StaticResource Divider}"/>
+                    <CheckBox x:Name="chkHideFocus" Content="Hide widget windows when browser or game window is focused" Tag="Hides every desktop widget while a game is the window you are using, and brings them back when you switch away. Off by default. Browsers follow the setting above." Click="Changed"/>
+                    <Border Style="{StaticResource Divider}"/>
+                    <CheckBox x:Name="chkCloseGaming" Content="Close widgets while gaming" Tag="Closes every desktop widget while a game or other fullscreen app is in front, and brings them back when you leave it. Frees a little RAM and CPU for the game." Click="Changed"/>
+                </StackPanel>
+            </Border>
+
+            <StackPanel Orientation="Horizontal" Margin="0,24,0,0">
+                <Button Content="Reset widget positions" Click="ResetClicked"/>
+                <TextBlock x:Name="txtStatus" Foreground="{DynamicResource TextDimBrush}" FontSize="13" VerticalAlignment="Center" Margin="16,0,0,0" TextWrapping="Wrap"/>
+            </StackPanel>
+        </StackPanel>
+</UserControl>

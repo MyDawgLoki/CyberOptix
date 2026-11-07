@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <AssemblyName>CyberOptix</AssemblyName>
+    <Product>CyberOptix</Product>
+    <ApplicationIcon>Assets\CyberOptix.ico</ApplicationIcon>
+    <TargetFramework>net8.0-windows10.0.22621.0</TargetFramework>
+    <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <StartupObject>CyberOptix.App</StartupObject>
+    <ConcurrentGarbageCollection>false</ConcurrentGarbageCollection>
+    <TieredPGO>false</TieredPGO>
+    <!-- Keep the folder the app was built in out of the compiled files (and their debug info). -->
+    <PathMap>$(MSBuildProjectDirectory)=/CyberOptix</PathMap>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="..\Uninstall\Uninstall.exe" Condition="Exists('..\Uninstall\Uninstall.exe')" Link="Uninstall.exe" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\GlassCursor\settings.json" LogicalName="GlassCursor/settings.json" />
+    <Resource Include="Assets\CyberOptix-Brand-Label.png" />
+    <Resource Include="Assets\CyberOptixWallpaper.png" />
+    <EmbeddedResource Include="Assets\DefaultSettings.json" LogicalName="Assets/DefaultSettings.json" />
+    <EmbeddedResource Include="Assets\CyberOptix-Wallpaper-Loop.mp4" LogicalName="Assets/CyberOptix-Wallpaper-Loop.mp4" />
+    <Resource Include="Assets\CyberOptix.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <RuntimeHostConfigurationOption Include="System.GC.ConserveMemory" Value="5" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GlassCursor\GlassCursor.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="LibreHardwareMonitorLib" Version="0.9.6" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.4314.35" />
+    <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="8.0.1" />
+  </ItemGroup>
+</Project>

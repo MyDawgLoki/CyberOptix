@@ -1,0 +1,68 @@
+<UserControl x:Class="CyberOptix.Pages.TaskbarPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ctl="clr-namespace:CyberOptix.Controls">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel MaxWidth="720" HorizontalAlignment="Left" Margin="24,8,24,24">
+            <TextBlock Text="Taskbar" Style="{StaticResource PageTitle}"/>
+            <TextBlock Text="Change how the Windows taskbar looks and behaves. Changes save instantly; a few need Restart Explorer." Style="{StaticResource PageSub}"/>
+
+            <TextBlock Text="Layout" Style="{StaticResource GroupTitle}" Margin="4,0,0,10"/>
+            <Border Style="{StaticResource Card}">
+                <StackPanel>
+                    <CheckBox x:Name="chkCenter" Content="Center taskbar icons" Tag="Off aligns icons to the left, like Windows 10." Click="Changed"/>
+                    <Border Style="{StaticResource Divider}"/>
+                    <CheckBox x:Name="chkSmallIcons" Content="Small taskbar icons" Click="Changed"/>
+                    <Border Style="{StaticResource Divider}"/>
+                    <CheckBox x:Name="chkAutoHide" Content="Hide the taskbar automatically" Tag="Needs Restart Explorer to take effect." Click="Changed"/>
+                    <Border Style="{StaticResource Divider}"/>
+                    <ctl:SettingRow Title="Search">
+                        <ComboBox x:Name="cmbSearch" SelectionChanged="Changed">
+                            <ComboBoxItem Content="Hidden"/>
+                            <ComboBoxItem Content="Icon only"/>
+                            <ComboBoxItem Content="Search box"/>
+                            <ComboBoxItem Content="Icon and label"/>
+                        </ComboBox>
+                    </ctl:SettingRow>
+                    <Border Style="{StaticResource Divider}"/>
+                    <ctl:SettingRow Title="Combine taskbar buttons">
+                        <ComboBox x:Name="cmbCombine" SelectionChanged="Changed">
+                            <ComboBoxItem Content="Always"/>
+                            <ComboBoxItem Content="When taskbar is full"/>
+                            <ComboBoxItem Content="Never"/>
+                        </ComboBox>
+                    </ctl:SettingRow>
+                </StackPanel>
+            </Border>
+
+            <TextBlock Text="Buttons" Style="{StaticResource GroupTitle}"/>
+            <Border Style="{StaticResource Card}">
+                <StackPanel>
+                    <CheckBox x:Name="chkTaskView" Content="Task View button" Click="Changed"/>
+                    <Border Style="{StaticResource Divider}"/>
+                    <CheckBox x:Name="chkWidgets" Content="Widgets button" Click="Changed"/>
+                    <Border Style="{StaticResource Divider}"/>
+                    <CheckBox x:Name="chkChat" Content="Chat button" Click="Changed"/>
+                    <Border Style="{StaticResource Divider}"/>
+                    <CheckBox x:Name="chkShowDesktop" Content="Show Desktop button" Tag="The thin strip at the far right corner." Click="Changed"/>
+                </StackPanel>
+            </Border>
+
+            <TextBlock Text="Color" Style="{StaticResource GroupTitle}"/>
+            <Border Style="{StaticResource Card}">
+                <StackPanel>
+                    <CheckBox x:Name="chkDark" Content="Dark taskbar and Start menu" Click="Changed"/>
+                    <Border Style="{StaticResource Divider}"/>
+                    <CheckBox x:Name="chkTransparent" Content="Transparency effects" Tag="Blur on the taskbar, Start menu and windows. Same Windows setting as the Optimizer tweak that turns it off." Click="Changed"/>
+                    <Border Style="{StaticResource Divider}"/>
+                    <CheckBox x:Name="chkAccent" Content="Accent color on the taskbar" Tag="Colors the taskbar and Start with your accent color. Only shows when the dark taskbar option is on." Click="Changed"/>
+                </StackPanel>
+            </Border>
+
+            <StackPanel Orientation="Horizontal" Margin="0,24,0,0">
+                <Button Content="Restart Explorer" Style="{StaticResource PrimaryButton}" Click="RestartExplorerClicked"/>
+                <TextBlock x:Name="txtStatus" Foreground="{DynamicResource TextDimBrush}" FontSize="13" VerticalAlignment="Center" Margin="16,0,0,0" TextWrapping="Wrap"/>
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

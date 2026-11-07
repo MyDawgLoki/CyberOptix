@@ -1,0 +1,21 @@
+{
+  "Diameter": 20,
+  "Zoom": 1.5,
+  "HidePointer": true,
+  "StartOn": true,
+  "LensCentered": true,
+  "CentreOnWindow": true,
+  "Keybinds": {},
+  "RingColor": "#FF18DC",
+  "DotColor": "#F70600",
+  "DotSize": 3,
+  "ScopeEnabled": true,
+  "ScopeFollowCursor": false,
+  "ScopeDelayMs": 300,
+  "ScopeDiameter": 1220,
+  "ScopeZoom": 2,
+  "ScopeCrisp": true,
+  "ScopeContrast": 30,
+  "CursorZoomDiameter": 300,
+  "CursorZoomZoom": 1.5
+}

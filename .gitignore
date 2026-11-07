@@ -1,0 +1,42 @@
+# Build output (rebuilt from source; also contains local build paths)
+**/bin/
+**/obj/
+publish/
+publish-standalone/
+*.pdb
+
+# Compiled helper binaries, produced by build.ps1 from GlassCursor/ and Uninstall/
+src/Uninstall/Uninstall.exe
+
+# Local tooling and editor state (can contain usernames and absolute paths)
+.claude/
+.vs/
+.vscode/
+*.user
+*.suo
+
+# Secrets, in case any ever get created
+*.pfx
+*.snk
+*.pem
+*.key
+.env
+.env.*
+*.env
+secrets*.json
+*.log
+
+# Glass Cursor publish output
+
+# Temporary project files the WPF build generates (they contain local paths)
+*_wpftmp.csproj
+*.tmp
+
+# Debug logs an older build wrote next to the program
+nvidia_log.txt
+
+# Personal state files (these live in %ProgramData%\CyberOptix, never in the repo)
+originals.json
+ram-state.json
+moved-shortcuts.json
+/settings.json
