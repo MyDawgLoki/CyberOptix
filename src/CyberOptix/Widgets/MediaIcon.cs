@@ -45,7 +45,7 @@ namespace CyberOptix.Widgets
                     board.Children.Add(Tile(Brushes.Black, 5));
                     // the bars of the waveform, then the cloud
                     // drawn a little smaller than the tile, so its rounded corners never touch the cloud
-                    var art = new Canvas { Width = 24, Height = 24, RenderTransformOrigin = new Point(0.5, 0.5), RenderTransform = new ScaleTransform(0.74, 0.74) };
+                    var art = new Canvas { Width = 24, Height = 24, RenderTransformOrigin = new Point(0.5, 0.5), RenderTransform = new TransformGroup { Children = { new TranslateTransform(-0.45, 0), new ScaleTransform(0.62, 0.62) } } };
                     double[] xs = { 3.0, 5.0, 7.0, 9.0, 11.0 };
                     double[] tops = { 11.2, 9.6, 8.2, 7.0, 8.2 };
                     for (int i = 0; i < xs.Length; i++)
