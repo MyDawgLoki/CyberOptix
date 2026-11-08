@@ -16,6 +16,10 @@
     <PathMap>$(MSBuildProjectDirectory)=/CyberOptix</PathMap>
   </PropertyGroup>
   <ItemGroup>
+    <!-- The guide, screenshots and tour video travel with the release, in a Docs folder next to the program. -->
+    <None Include="..\..\README.md" Link="Docs\README.md" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
+    <None Include="..\..\docs\screenshots\*.png" Link="Docs\docs\screenshots\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
+    <None Include="..\..\docs\CyberOptix-Tour.mp4" Condition="Exists('..\..\docs\CyberOptix-Tour.mp4')" Link="Docs\docs\CyberOptix-Tour.mp4" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
     <None Include="..\Uninstall\Uninstall.exe" Condition="Exists('..\Uninstall\Uninstall.exe')" Link="Uninstall.exe" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
   </ItemGroup>
   <ItemGroup>

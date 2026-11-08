@@ -26,6 +26,63 @@ CyberOptix combines two kinds of tools that usually live in separate apps:
 
 Every setting shows its real current state, applies when you change it, and can be put back. CyberOptix records your original Windows values before it changes anything, so you can restore exactly what you want, group by group.
 
+## A look around
+
+A short tour of the app (screens from the app itself, plus a live clip of Glass Cursor): [watch the tour video](docs/CyberOptix-Tour.mp4) (`docs/CyberOptix-Tour.mp4`). The release download also has it in its `Docs` folder.
+
+| | |
+|---|---|
+| ![Home](docs/screenshots/01-home.png) **Home**: optimize, restore, reset | ![Optimizer](docs/screenshots/02-optimizer.png) **Optimizer**: Gaming and Universal profiles |
+| ![Desktop Clock](docs/screenshots/03-desktop-clock-themes.png) **Desktop Clock**: themes, or add your own | ![Widgets](docs/screenshots/04-widgets.png) **Widgets**: placed per screen |
+| ![Hardware](docs/screenshots/05-hardware.png) **Hardware**: pointer, cursor, Glass Cursor | ![Dock](docs/screenshots/06-dock-settings.png) **Dock**: behavior and sizes |
+| ![Dock icons](docs/screenshots/07-dock-icons.png) **Dock icons**: drag between docks | ![Taskbar](docs/screenshots/08-taskbar.png) **Taskbar**: Windows' own settings |
+| ![Window Manager](docs/screenshots/09-window-manager.png) **Window Manager**: snap hotkeys | ![App Settings](docs/screenshots/10-app-settings.png) **App Settings**: colors and glow |
+
+The screens are the app's own pages drawn with its default settings, so nothing on them comes from a real PC.
+
+## How it works
+
+- **One app, many windows.** CyberOptix is a single program that runs as administrator. Its main window has a page for each area (Home, Optimizer, Task Manager, Display, Widgets, Hardware, Dock, Taskbar, Window Manager, App Settings). The dock, the desktop clock and the widgets are separate see-through windows it owns, so they stop when you exit it. Closing the main window keeps it in the system tray, so the dock, widgets, hotkeys and Glass Cursor keep working.
+- **It changes Windows only when you ask.** Nothing on the Optimizer page is applied while you move switches around. A profile is stored and applied when you press its Save button, and a restore point is made first. Home's buttons and the Taskbar page's switches also act when you press them. Opening the app does not re-apply your Optimizer profile.
+- **It remembers how Windows was before it touched anything.** The first time it runs, CyberOptix saves your original registry values, service start modes, power plan, display colors and mouse settings. "Restore original Windows settings" puts back exactly the groups you tick, so you can undo one thing without losing the rest.
+- **Your settings are plain data.** Everything CyberOptix itself remembers lives in one JSON file in `%ProgramData%\CyberOptix`, a folder only administrators can change. There are no accounts, no telemetry and no cloud. The only network use is the optional weather lookup.
+
+## Settings: what sticks and what doesn't
+
+**Sticks: CyberOptix saves it and brings it back every launch**
+- The look: colors, glass, backdrop, glowing edges, the animated wallpaper, and the "match the media player color" switches.
+- The dock: position, how it behaves with windows and apps open, sizes, glow, which icons are on, their order, which dock each icon is in, and where each dock sits.
+- The desktop clock (theme, options, color, size, and the spot you dragged it to), your own clock themes, and the live wallpaper if it was running.
+- Widgets: which are on, their opacity, the weather city and units, and which media player buttons show.
+- The Optimizer's saved Gaming and Universal profiles, the games list, the Task Manager "Never kill" list and the Free up resources choices.
+- Hotkeys, Window Manager gap, Glass Cursor settings, and RGB lighting (put back at launch).
+- Start with Windows, start quietly, close to tray and where the window minimizes to.
+
+**Sticks, but Windows is the one keeping it** (CyberOptix changed it once; it does not re-apply it)
+- Everything an Optimizer profile or a Home button applied: registry tweaks, services, the power plan, Game DVR, GPU scheduling.
+- The Taskbar page's switches, and pointer speed, scrolling, cursor theme and size.
+- Key remaps (Windows reads them after a restart).
+- These stay until you change them or use Restore original Windows settings.
+
+**Does not stick: starts fresh, or is live**
+- **Widget lock.** Widgets always start locked in place. Unlock them to move them, and lock them again.
+- **Display colors.** Colors you set on a display are put back at launch, but Windows or the graphics driver can reset them (for example after sleep). Turn on "Do not change my original Windows settings when CyberOptix relaunches" in App Settings and nothing is put back at launch.
+- **Colors from the media player.** While something plays, the accent, window, text, card and glow colors can follow the album cover. When it stops they go back to the colors you chose.
+- **Unsaved Optimizer changes.** Switches on the Optimizer page are a draft until you press Save.
+- **Live information.** The process list, temperatures, CPU and GPU readings and the weather are read fresh. The weather is looked up again every 20 minutes and is never stored.
+- **The Windows taskbar while the dock replaces it.** It is hidden only while CyberOptix runs, and comes back when you exit.
+
+Every page has a **Reset this page to default** button, and Home has **Reset all settings to default**, so you never have to reset everything to undo one page.
+
+## Preconfigured settings
+
+CyberOptix's defaults were set up by its author on one PC: an **Intel Core i9-13900K**, an **NVIDIA GeForce RTX 4080 with 16 GB of VRAM** and **32 GB of RAM**. That means:
+
+- The **Optimizer profiles** (Ultimate Performance power plan, fullscreen optimizations off, hardware GPU scheduling on, visual effects off, Nagle's algorithm off, digital vibrance 70, gamma 1.05, ultra low latency and maximum performance power management) are tuned for that kind of fast desktop. On a laptop, a smaller GPU or less memory, look through them before you press Save. Nothing is applied until you do.
+- The **dock layout** (app icons 18 px, system icons 15 px, a 13 px clock, the AI, social and system-control icons in their own docks beside the main dock, the dock falling behind windows) was arranged on a large, high-resolution screen. The Dock page changes all of it, and Reset this page to default brings it back.
+- The first launch has the dock **replace the Windows taskbar** (and put the Start and Search menus flush with the bottom of the screen). Switch off "Replace the Windows taskbar" on the Dock page if you want the normal taskbar. It returns whenever you close CyberOptix.
+- Your own things start empty: no games, no pinned apps, no programs on the Software dock, and the weather city is New York until you set yours.
+
 ## Features
 
 ### Home
