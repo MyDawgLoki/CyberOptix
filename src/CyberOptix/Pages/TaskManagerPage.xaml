@@ -145,12 +145,16 @@
           <StackPanel x:Name="secClean" Visibility="Collapsed" Width="760" HorizontalAlignment="Left">
             <StackPanel x:Name="cleanMain">
             <TextBlock Text="CyberOptix scans this PC and lists what is safe to stop, one item at a time. Nothing is switched on for you. Switch on what you want stopped, then press Run once. It runs one time and finishes. Nothing keeps running or comes back on its own; press it again when you want it again." Style="{StaticResource PageSub}" Margin="0,0,0,16"/>
-            <StackPanel Orientation="Horizontal" Margin="0,0,0,14">
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
                 <Button x:Name="btnCleanScan" Content="Scan again" Click="CleanScanClicked"/>
                 <Button Content="Untick all" Margin="10,0,0,0" Click="CleanUntickClicked"/>
                 <Button Content="Never kill list" Margin="10,0,0,0" Click="NeverOpenClicked"/>
-                <TextBlock x:Name="txtCleanScan" Foreground="{DynamicResource TextDimBrush}" FontSize="13" VerticalAlignment="Center" Margin="16,0,0,0" TextWrapping="Wrap" MaxWidth="460"/>
+                <Button x:Name="btnCleanRun" Content="Run once" Style="{StaticResource PrimaryButton}" Margin="24,0,0,0" Click="CleanRunClicked"/>
+                <Button x:Name="btnCleanRestore" Content="Restore what was stopped" Margin="10,0,0,0" Click="CleanRestoreClicked"/>
             </StackPanel>
+            <TextBlock x:Name="txtCleanScan" Foreground="{DynamicResource TextDimBrush}" FontSize="13" Margin="0,0,0,4" TextWrapping="Wrap"/>
+            <TextBlock x:Name="txtCleanStatus" Foreground="{DynamicResource TextDimBrush}" FontSize="13" Margin="0,0,0,4" TextWrapping="Wrap"/>
+            <TextBlock Style="{StaticResource Note}" Margin="0,0,0,14" Text="Services are stopped and set to Manual, never deleted or disabled, and their original settings are saved so Restore can put them back. Security software, graphics drivers, audio and core Windows services are never touched."/>
             <StackPanel x:Name="panelClean"/>
 
             <Border x:Name="panelCleanConfirm" Visibility="Collapsed" Margin="0,16,0,0" Padding="14,12" CornerRadius="10"
@@ -164,12 +168,6 @@
                 </StackPanel>
             </Border>
 
-            <StackPanel Orientation="Horizontal" Margin="0,16,0,0">
-                <Button x:Name="btnCleanRun" Content="Run once" Style="{StaticResource PrimaryButton}" Click="CleanRunClicked"/>
-                <Button x:Name="btnCleanRestore" Content="Restore what was stopped" Margin="10,0,0,0" Click="CleanRestoreClicked"/>
-                <TextBlock x:Name="txtCleanStatus" Foreground="{DynamicResource TextDimBrush}" FontSize="13" VerticalAlignment="Center" Margin="16,0,0,0" TextWrapping="Wrap" MaxWidth="420"/>
-            </StackPanel>
-            <TextBlock Style="{StaticResource Note}" Text="Services are stopped and set to Manual, never deleted or disabled, and their original settings are saved so Restore can put them back. Security software, graphics drivers, audio and core Windows services are never touched."/>
             </StackPanel>
 
           <StackPanel x:Name="secNever" Visibility="Collapsed">
