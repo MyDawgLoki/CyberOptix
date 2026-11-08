@@ -72,6 +72,36 @@ namespace CyberOptix.Services
             return gap >= 3 && gap <= MaxGap ? gap : 0;   // already at the bottom, below it, or too far to be the taskbar's room
         }
 
+        /// <summary>The bottom edge (screen pixels) of what the menu actually shows, found through UI Automation, or null when it can't be read.</summary>
+        private static int? VisiblePanelBottom(IntPtr window, RECT win)
+        {
+            try
+            {
+                var root = System.Windows.Automation.AutomationElement.FromHandle(window);
+                var walker = System.Windows.Automation.TreeWalker.RawViewWalker;
+                int winHeight = win.Bottom - win.Top, best = int.MinValue, seen = 0;
+                var stack = new System.Collections.Generic.Stack<(System.Windows.Automation.AutomationElement El, int Depth)>();
+                stack.Push((root, 0));
+                while (stack.Count > 0 && seen < 80)
+                {
+                    var (el, depth) = stack.Pop();
+                    for (var c = walker.GetFirstChild(el); c != null && seen < 80; c = walker.GetNextSibling(c))
+                    {
+                        seen++;
+                        var b = c.Current.BoundingRectangle;
+                        if (!c.Current.IsOffscreen && !b.IsEmpty && b.Width > 100 && b.Height > 40 && b.Height < winHeight - 4)
+                        {
+                            int bot = (int)Math.Round(b.Bottom);
+                            if (bot <= win.Bottom + 2 && bot > best) best = bot;   // the lowest thing that is not the whole window
+                        }
+                        if (depth < 2) stack.Push((c, depth + 1));
+                    }
+                }
+                return best == int.MinValue ? null : best;
+            }
+            catch { return null; }
+        }
+
         /// <summary>Moves the menu down so its bottom edge is the bottom of the screen. True if it moved.</summary>
         public static bool ClampToBottom(IntPtr window)
         {
@@ -80,7 +110,10 @@ namespace CyberOptix.Services
                 if (!GetWindowRect(window, out var r)) return false;
                 var info = new MONITORINFO { Size = Marshal.SizeOf<MONITORINFO>() };
                 if (!GetMonitorInfo(MonitorFromWindow(window, 2 /* the nearest screen */), ref info)) return false;
-                int gap = GapToClose(r.Bottom, info.Monitor.Bottom);
+                // Windows draws the panel inside a larger see-through window, so the window's edge can already be at the
+                // bottom of the screen while the panel is still held up by the taskbar's room. Measure the panel itself.
+                int bottom = VisiblePanelBottom(window, r) ?? r.Bottom;
+                int gap = GapToClose(bottom, info.Monitor.Bottom);
                 if (gap == 0) return false;
                 // keep its size and its place in the stack and do not take focus: only the position changes
                 return SetWindowPos(window, IntPtr.Zero, r.Left, r.Top + gap, 0, 0, 0x0001 | 0x0004 | 0x0010);
