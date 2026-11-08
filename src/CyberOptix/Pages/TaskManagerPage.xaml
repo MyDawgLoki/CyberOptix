@@ -155,9 +155,7 @@
             <TextBlock x:Name="txtCleanScan" Foreground="{DynamicResource TextDimBrush}" FontSize="13" Margin="0,0,0,4" TextWrapping="Wrap"/>
             <TextBlock x:Name="txtCleanStatus" Foreground="{DynamicResource TextDimBrush}" FontSize="13" Margin="0,0,0,4" TextWrapping="Wrap"/>
             <TextBlock Style="{StaticResource Note}" Margin="0,0,0,14" Text="Services are stopped and set to Manual, never deleted or disabled, and their original settings are saved so Restore can put them back. Security software, graphics drivers, audio and core Windows services are never touched."/>
-            <StackPanel x:Name="panelClean"/>
-
-            <Border x:Name="panelCleanConfirm" Visibility="Collapsed" Margin="0,16,0,0" Padding="14,12" CornerRadius="10"
+            <Border x:Name="panelCleanConfirm" Visibility="Collapsed" Margin="0,0,0,14" Padding="14,12" CornerRadius="10"
                     Background="{DynamicResource AccentSoftBrush}" BorderBrush="{DynamicResource AccentBorderBrush}" BorderThickness="1">
                 <StackPanel>
                     <TextBlock x:Name="txtCleanConfirm" TextWrapping="Wrap"/>
@@ -167,6 +165,7 @@
                     </StackPanel>
                 </StackPanel>
             </Border>
+            <StackPanel x:Name="panelClean"/>
 
             </StackPanel>
 
