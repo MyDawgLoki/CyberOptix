@@ -459,7 +459,7 @@ namespace CyberOptix.Widgets
             {
                 if (_startSeen == DateTime.MinValue) _startSeen = now;
                 // The menu slides in, so keep nudging it for a moment after it opens.
-                if (clampStart && now - _startSeen < TimeSpan.FromMilliseconds(1500) && (StartMenuService.LastWasSearch ? s.DockSearchAtBottom : s.DockStartAtBottom)) StartMenuService.ClampToBottom(startWindow);
+                if (clampStart && (StartMenuService.LastWasSearch ? s.DockSearchAtBottom : s.DockStartAtBottom)) StartMenuService.ClampToBottom(startWindow);
             }
             else
             {

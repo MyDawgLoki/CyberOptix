@@ -72,6 +72,9 @@ namespace CyberOptix.Services
             return gap >= 3 && gap <= MaxGap ? gap : 0;   // already at the bottom, below it, or too far to be the taskbar's room
         }
 
+        private static IntPtr _settledWindow;
+        private static RECT _settled;
+
         /// <summary>The bottom edge (screen pixels) of what the menu actually shows, found through UI Automation, or null when it can't be read.</summary>
         private static int? VisiblePanelBottom(IntPtr window, RECT win)
         {
@@ -89,7 +92,7 @@ namespace CyberOptix.Services
                     {
                         seen++;
                         var b = c.Current.BoundingRectangle;
-                        if (!c.Current.IsOffscreen && !b.IsEmpty && b.Width > 100 && b.Height > 40 && b.Height < winHeight - 4)
+                        if (!c.Current.IsOffscreen && !b.IsEmpty && b.Width > 100 && b.Height > 20 && b.Height < winHeight - 4)
                         {
                             int bot = (int)Math.Round(b.Bottom);
                             if (bot <= win.Bottom + 2 && bot > best) best = bot;   // the lowest thing that is not the whole window
@@ -108,13 +111,16 @@ namespace CyberOptix.Services
             try
             {
                 if (!GetWindowRect(window, out var r)) return false;
+                // Already measured at this exact place and found flush: nothing to do until the menu moves again.
+                if (window == _settledWindow && r.Left == _settled.Left && r.Top == _settled.Top && r.Bottom == _settled.Bottom) return false;
                 var info = new MONITORINFO { Size = Marshal.SizeOf<MONITORINFO>() };
                 if (!GetMonitorInfo(MonitorFromWindow(window, 2 /* the nearest screen */), ref info)) return false;
                 // Windows draws the panel inside a larger see-through window, so the window's edge can already be at the
                 // bottom of the screen while the panel is still held up by the taskbar's room. Measure the panel itself.
                 int bottom = VisiblePanelBottom(window, r) ?? r.Bottom;
                 int gap = GapToClose(bottom, info.Monitor.Bottom);
-                if (gap == 0) return false;
+                if (gap == 0) { _settledWindow = window; _settled = r; return false; }
+                _settledWindow = IntPtr.Zero;
                 // keep its size and its place in the stack and do not take focus: only the position changes
                 return SetWindowPos(window, IntPtr.Zero, r.Left, r.Top + gap, 0, 0, 0x0001 | 0x0004 | 0x0010);
             }
