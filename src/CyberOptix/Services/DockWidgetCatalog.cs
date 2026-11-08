@@ -219,7 +219,7 @@ namespace CyberOptix.Services
             Page("focus", "Do not disturb", "Quiet the notifications while you play or work.", "",
                  OsInfo.IsWindows11 ? "ms-settings:quietmomentshome" : "ms-settings:quiethours"),
             Page("notifications", "Notifications", "Which apps may show notifications.", "", "ms-settings:notifications"),
-            Page("power", "Power and battery", "Power mode, sleep and battery use.", "", "ms-settings:powersleep"),
+            Page("powersettings", "Power and battery", "Power mode, sleep and battery use.", "", "ms-settings:powersleep"),
             Page("mouse", "Mouse", "Pointer speed, buttons and scrolling.", "", "ms-settings:mousetouchpad"),
             Page("camera", "Camera", "Your cameras and who may use them.", "", "ms-settings:privacy-webcam"),
             Page("printers", "Printers and scanners", "Add or manage printers.", "", "ms-settings:printers"),
