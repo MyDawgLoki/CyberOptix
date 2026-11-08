@@ -23,6 +23,7 @@
   "DockLayer": "Fall",
   "DockSearchAtBottom": true,
   "DockStartAtBottom": true,
+  "SyncWindowsAccent": true,
   "DockFloatOverWindows": true,
   "DockReplaceTaskbar": true,
   "AppsPinned": false,

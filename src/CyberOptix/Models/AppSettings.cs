@@ -57,7 +57,7 @@ namespace CyberOptix.Models
         public bool KeepWindowsSettingsOnRelaunch { get; set; }
 
         /// <summary>Set Windows' accent color to the CyberOptix color, so Start, Search, the taskbar and window title bars (Windows Settings too) share it. Off: Windows keeps its own color.</summary>
-        public bool SyncWindowsAccent { get; set; }
+        public bool SyncWindowsAccent { get; set; } = true;
 
         public bool DockIconSizeV2 { get; set; }                 // set once the old default size (26) has been moved to the smaller default
         public bool DockShowRunning { get; set; } = true;

@@ -98,6 +98,7 @@ namespace CyberOptix
                     case "Settings":
                         SettingsDefaults.Reset(SettingsDefaults.AppSettingsPage);
                         ThemeService.Apply();
+                        WindowsAccentService.Sync();
                         pgSettings.Initialize();
                         _ = System.Threading.Tasks.Task.Run(AutoStartService.Sync);
                         break;
