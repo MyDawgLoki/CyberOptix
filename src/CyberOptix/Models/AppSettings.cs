@@ -58,6 +58,13 @@ namespace CyberOptix.Models
 
         /// <summary>Set Windows' accent color to the CyberOptix color, so Start, Search, the taskbar and window title bars (Windows Settings too) share it. Off: Windows keeps its own color.</summary>
         public bool SyncWindowsAccent { get; set; } = true;
+        // ...and how the rest of Windows' color settings are set while that is on (the same choices as Windows' Personalization > Colors)
+        public bool WinMatchMedia { get; set; }                    // while something plays, Windows' accent color follows the album cover (off: always the accent color above)
+        public bool WinSystemDark { get; set; } = true;           // "default Windows mode": Start, the taskbar and the system's own parts
+        public bool WinAppsDark { get; set; } = true;              // "default app mode": File Explorer, Settings and other apps
+        public bool WinTransparency { get; set; } = true;          // transparency effects
+        public bool WinAccentOnStart { get; set; } = true;         // show the accent color on Start and the taskbar
+        public bool WinAccentOnTitle { get; set; } = true;         // show it on title bars and window borders
 
         public bool DockIconSizeV2 { get; set; }                 // set once the old default size (26) has been moved to the smaller default
         public bool DockShowRunning { get; set; } = true;

@@ -28,6 +28,8 @@ namespace CyberOptix.Services
         public static Color? ForAccent => AppSettings.Current.MatchMediaAccent ? Current : null;
         public static Color? ForWindow => AppSettings.Current.MatchMediaWindow ? Current : null;
         public static Color? ForText => AppSettings.Current.MatchMediaText ? Current : null;
+        /// <summary>The color Windows' own accent color takes (its own switch, which only counts while the Windows color match is on).</summary>
+        public static Color? ForWindows => AppSettings.Current.SyncWindowsAccent && AppSettings.Current.WinMatchMedia ? Current : null;
 
         private static bool _running;
         private static bool _armed;          // something has started playing since launch (or since the last session ended)
@@ -37,7 +39,7 @@ namespace CyberOptix.Services
         public static void Sync()
         {
             var s = AppSettings.Current;
-            bool want = s.MatchMediaColor || s.MatchMediaGlow || s.DockMatchMedia || s.MatchMediaAccent || s.MatchMediaWindow || s.MatchMediaText || s.MediaWidgetAutoShow;
+            bool want = s.MatchMediaColor || s.MatchMediaGlow || s.DockMatchMedia || s.MatchMediaAccent || s.MatchMediaWindow || s.MatchMediaText || s.MediaWidgetAutoShow || (s.SyncWindowsAccent && s.WinMatchMedia);
             if (want && !_running)
             {
                 _running = true;
@@ -93,6 +95,8 @@ namespace CyberOptix.Services
             if (color == Current) return;
             Current = color;
             Application.Current?.Dispatcher.BeginInvoke(new Action(ThemeService.Apply));
+            if (AppSettings.Current.SyncWindowsAccent && AppSettings.Current.WinMatchMedia)
+                System.Threading.Tasks.Task.Run(WindowsAccentService.Refresh);   // registry writes and a broadcast: not on the UI thread
         }
 
         /// <summary>Puts the media player on the desktop when playback starts, unless the user closed it (that switches this off) or it is already there.</summary>

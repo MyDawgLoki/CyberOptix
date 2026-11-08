@@ -80,6 +80,14 @@ namespace CyberOptix.Pages
             chkCloseToTray.IsChecked = s.CloseToTray;
             chkKeepWindows.IsChecked = s.KeepWindowsSettingsOnRelaunch;
             chkWindowsAccent.IsChecked = s.SyncWindowsAccent;
+            chkWinMatchMedia.IsChecked = s.WinMatchMedia;
+            cmbWinMode.SelectedIndex = s.WinSystemDark && s.WinAppsDark ? 1 : !s.WinSystemDark && !s.WinAppsDark ? 0 : 2;
+            cmbWinSystem.SelectedIndex = s.WinSystemDark ? 1 : 0;
+            cmbWinApp.SelectedIndex = s.WinAppsDark ? 1 : 0;
+            chkWinTransparency.IsChecked = s.WinTransparency;
+            chkWinAccentStart.IsChecked = s.WinAccentOnStart;
+            chkWinAccentTitle.IsChecked = s.WinAccentOnTitle;
+            ShowWindowsColorRows();
             cmbMinimizeTo.SelectedIndex = s.MinimizeTo == "Dock" ? 1 : s.MinimizeTo == "Tray" ? 2 : 0;
             sldPicture.Value = s.BackgroundImageOpacity;
             rowPicture.Description = string.IsNullOrWhiteSpace(s.BackgroundImagePath) ? "Using the CyberOptix wallpaper." : s.BackgroundImagePath;
@@ -440,11 +448,41 @@ namespace CyberOptix.Pages
             if (message != null) txtStatus.Text = message;
         }
 
+        /// <summary>The two separate mode choices show only when the mode is Custom; the other choices work only while the color match is on.</summary>
+        private void ShowWindowsColorRows()
+        {
+            bool custom = cmbWinMode.SelectedIndex == 2;
+            rowWinSystem.Visibility = rowWinApp.Visibility = custom ? Visibility.Visible : Visibility.Collapsed;
+            bool on = chkWindowsAccent.IsChecked == true;
+            foreach (UIElement el in new UIElement[] { chkWinMatchMedia, cmbWinMode, rowWinSystem, rowWinApp, chkWinTransparency, chkWinAccentStart, chkWinAccentTitle })
+                el.IsEnabled = on;
+        }
+
         private void WindowsAccentChanged(object sender, RoutedEventArgs e)
         {
             if (_loading) return;
-            AppSettings.Current.SyncWindowsAccent = chkWindowsAccent.IsChecked == true;
+            var s = AppSettings.Current;
+            _loading = true;
+            if (ReferenceEquals(sender, cmbWinMode) && cmbWinMode.SelectedIndex is 0 or 1)
+            {
+                cmbWinSystem.SelectedIndex = cmbWinApp.SelectedIndex = cmbWinMode.SelectedIndex;   // Light or Dark sets both
+            }
+            else if (ReferenceEquals(sender, cmbWinSystem) || ReferenceEquals(sender, cmbWinApp))
+            {
+                cmbWinMode.SelectedIndex = cmbWinSystem.SelectedIndex == cmbWinApp.SelectedIndex ? cmbWinSystem.SelectedIndex : 2;
+            }
+            _loading = false;
+
+            s.SyncWindowsAccent = chkWindowsAccent.IsChecked == true;
+            s.WinMatchMedia = chkWinMatchMedia.IsChecked == true;
+            s.WinSystemDark = cmbWinSystem.SelectedIndex == 1;
+            s.WinAppsDark = cmbWinApp.SelectedIndex == 1;
+            s.WinTransparency = chkWinTransparency.IsChecked == true;
+            s.WinAccentOnStart = chkWinAccentStart.IsChecked == true;
+            s.WinAccentOnTitle = chkWinAccentTitle.IsChecked == true;
             AppSettings.Save();
+            ShowWindowsColorRows();
+            MediaColorService.Sync();   // starts or stops following the media player for the Windows color
             WindowsAccentService.Sync();
         }
 
@@ -488,7 +526,7 @@ namespace CyberOptix.Pages
         {
             ThemeService.Apply();
             AppSettings.Save();
-            if (AppSettings.Current.SyncWindowsAccent) WindowsAccentService.Apply(AppSettings.Current.AccentHex);
+            WindowsAccentService.Refresh();
             txtStatus.Text = "";
         }
     }

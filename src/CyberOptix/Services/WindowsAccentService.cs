@@ -85,13 +85,22 @@ namespace CyberOptix.Services
         }
 
         /// <summary>Makes Windows' accent color (and the places it is shown) this color. Keeps a copy of the old values the first time.</summary>
+        private static readonly object Gate = new();
+
         public static void Apply(string hex)
+        {
+            lock (Gate) ApplyLocked(hex);
+        }
+
+        private static void ApplyLocked(string hex)
         {
             try
             {
                 if (!ThemeService.TryParse(hex, out var c)) return;
-                if (string.Equals(hex, _lastHex, StringComparison.OrdinalIgnoreCase) && HasBackup) return;   // already this color
-                _lastHex = hex;
+                var s0 = AppSettings.Current;
+                string key = hex + s0.WinSystemDark + s0.WinAppsDark + s0.WinTransparency + s0.WinAccentOnStart + s0.WinAccentOnTitle;
+                if (key == _lastHex && HasBackup) return;   // already exactly this
+                _lastHex = key;
                 if (!HasBackup) File.WriteAllText(BackupPath, JsonSerializer.Serialize(Read(), Json));
                 else
                 {
@@ -117,11 +126,12 @@ namespace CyberOptix.Services
                 Write(Dwm, "AccentColor", Dword(abgr), RegistryValueKind.DWord);
                 Write(Dwm, "ColorizationColor", Dword(argb), RegistryValueKind.DWord);
                 Write(Dwm, "ColorizationAfterglow", Dword(argb), RegistryValueKind.DWord);
-                Write(Dwm, "ColorPrevalence", 1, RegistryValueKind.DWord);        // title bars and window borders
-                Write(Personalize, "ColorPrevalence", 1, RegistryValueKind.DWord); // Start and the taskbar
-                Write(Personalize, "AppsUseLightTheme", 0, RegistryValueKind.DWord);     // File Explorer, Settings and other Windows apps: dark
-                Write(Personalize, "SystemUsesLightTheme", 0, RegistryValueKind.DWord);  // Start and the taskbar show the accent color only in dark mode
-                Write(Personalize, "EnableTransparency", 1, RegistryValueKind.DWord);
+                var s = AppSettings.Current;
+                Write(Dwm, "ColorPrevalence", s.WinAccentOnTitle ? 1 : 0, RegistryValueKind.DWord);        // title bars and window borders
+                Write(Personalize, "ColorPrevalence", s.WinAccentOnStart ? 1 : 0, RegistryValueKind.DWord); // Start and the taskbar
+                Write(Personalize, "AppsUseLightTheme", s.WinAppsDark ? 0 : 1, RegistryValueKind.DWord);     // File Explorer, Settings and other apps
+                Write(Personalize, "SystemUsesLightTheme", s.WinSystemDark ? 0 : 1, RegistryValueKind.DWord); // Start and the taskbar show the accent color only in dark mode
+                Write(Personalize, "EnableTransparency", s.WinTransparency ? 1 : 0, RegistryValueKind.DWord);
                 Broadcast();
             }
             catch { }
@@ -163,11 +173,20 @@ namespace CyberOptix.Services
             catch { }
         }
 
+        /// <summary>The color to use now: the album cover's while matching the media player and something plays, otherwise the CyberOptix accent.</summary>
+        private static string CurrentHex() =>
+            MediaColorService.ForWindows is Color m ? $"#{m.R:X2}{m.G:X2}{m.B:X2}" : AppSettings.Current.AccentHex;
+
+        /// <summary>Applies the current color when the match is on (and does nothing when it is already applied).</summary>
+        public static void Refresh()
+        {
+            if (AppSettings.Current.SyncWindowsAccent) Apply(CurrentHex());
+        }
+
         /// <summary>Applies or removes the color to match the setting.</summary>
         public static void Sync()
         {
-            var s = AppSettings.Current;
-            if (s.SyncWindowsAccent) Apply(s.AccentHex); else Restore();
+            if (AppSettings.Current.SyncWindowsAccent) Apply(CurrentHex()); else Restore();
         }
     }
 }

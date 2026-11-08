@@ -93,7 +93,7 @@ namespace CyberOptix.Services
         {
             "AccentHex", "TintHex", "GlassTint", "WindowOpacity", "Backdrop", "FontHex", "MatchMediaAccent", "MatchMediaWindow", "MatchMediaText", "MatchMediaColor", "MatchMediaGlow", "CardHex",
             "CardOpacity", "BackgroundImage", "BackgroundVideo", "BackgroundImagePath", "BackgroundImageOpacity", "WindowGlow", "WindowGlowColor", "StartWithWindows", "StartQuietly",
-            "CloseToTray", "MinimizeTo", "SyncWindowsAccent",
+            "CloseToTray", "MinimizeTo", "SyncWindowsAccent", "WinMatchMedia", "WinSystemDark", "WinAppsDark", "WinTransparency", "WinAccentOnStart", "WinAccentOnTitle",
         };
     }
 }
