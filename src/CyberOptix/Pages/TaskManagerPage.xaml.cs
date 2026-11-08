@@ -51,38 +51,19 @@ namespace CyberOptix.Pages
 
         private void VisibilityChanged(object sender, DependencyPropertyChangedEventArgs e) => UpdateActivity();
 
-        /// <summary>Switches between the three tabs: Processes (with the live monitors), Start-up apps and Free up resources.</summary>
+        /// <summary>Switches between the four tabs: Processes (with the live monitors), Start-up apps, Free up resources and Never kill list.</summary>
         private void TabChanged(object sender, RoutedEventArgs e)
         {
             if (!_ready) return; // Checked fires while XAML is still loading
             secProcs.Visibility = rbTabProcs.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
             secStartup.Visibility = rbTabStartup.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
-            secClean.Visibility = rbTabClean.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
-            btnNeverTop.Visibility = secClean.Visibility;   // the Never kill list button sits beside this tab
-            if (rbTabClean.IsChecked == true)
-            {
-                // Always open on the clean-up list, not on the Never kill list.
-                secNever.Visibility = Visibility.Collapsed;
-                cleanMain.Visibility = Visibility.Visible;
-            }
+            bool clean = rbTabClean.IsChecked == true, never = rbTabNever.IsChecked == true;
+            secClean.Visibility = clean || never ? Visibility.Visible : Visibility.Collapsed;   // both tabs live in this section
+            cleanMain.Visibility = clean ? Visibility.Visible : Visibility.Collapsed;
+            secNever.Visibility = never ? Visibility.Visible : Visibility.Collapsed;
+            if (never && !_neverLoaded) StartNeverLoad();
             scrollMain.ScrollToTop();
-            UpdateActivity();
-        }
-
-        private void NeverOpenClicked(object sender, RoutedEventArgs e)
-        {
-            cleanMain.Visibility = Visibility.Collapsed;
-            secNever.Visibility = Visibility.Visible;
-            scrollMain.ScrollToTop();
-            if (!_neverLoaded) StartNeverLoad();
-        }
-
-        private void NeverBackClicked(object sender, RoutedEventArgs e)
-        {
-            secNever.Visibility = Visibility.Collapsed;
-            cleanMain.Visibility = Visibility.Visible;
-            scrollMain.ScrollToTop();
-            if (!_cleanScanned) StartCleanScan();
+            UpdateActivity();   // starts the clean-up scan the first time its tab opens
         }
 
         /// <summary>Process sampling only runs while the Processes tab is on screen; the start-up list loads the first time its tab opens.

@@ -38,9 +38,9 @@
                     <RadioButton x:Name="rbTabProcs" Content="Processes" IsChecked="True" GroupName="TmTab" Style="{StaticResource Segment}" Checked="TabChanged"/>
                     <RadioButton x:Name="rbTabStartup" Content="Start-up apps" GroupName="TmTab" Style="{StaticResource Segment}" Checked="TabChanged"/>
                     <RadioButton x:Name="rbTabClean" Content="Free up resources" GroupName="TmTab" Style="{StaticResource Segment}" Checked="TabChanged"/>
+                    <RadioButton x:Name="rbTabNever" Content="Never kill list" GroupName="TmTab" Style="{StaticResource Segment}" Checked="TabChanged"/>
                 </StackPanel>
             </Border>
-            <Button x:Name="btnNeverTop" Content="Never kill list" Margin="10,0,0,0" VerticalAlignment="Center" Visibility="Collapsed" Click="NeverOpenClicked"/>
             </StackPanel>
         </StackPanel>
 
@@ -172,7 +172,6 @@
             </StackPanel>
 
           <StackPanel x:Name="secNever" Visibility="Collapsed">
-            <Button Content="Back to Free up resources" HorizontalAlignment="Left" Margin="0,0,0,14" Click="NeverBackClicked"/>
             <TextBlock Text="Never kill list" Style="{StaticResource SectionTitle}"/>
             <TextBlock Text="Switch on any program that must never be stopped. It is hidden from Free up resources and skipped even if something tries to stop it. Only programs running right now are listed; ones you saved earlier stay at the top." Style="{StaticResource PageSub}" Margin="0,0,0,14"/>
             <Grid Margin="0,0,0,12">
