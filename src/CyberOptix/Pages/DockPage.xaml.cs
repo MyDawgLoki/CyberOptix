@@ -23,7 +23,11 @@ namespace CyberOptix.Pages
     {
         private bool _loading = true;
 
-        public DockPage() => InitializeComponent();
+        public DockPage()
+        {
+            InitializeComponent();
+            wheelGlow.ColorCommitted += hex => { if (!_loading) SetGlowColor(hex); };   // the glow color is saved when a choice is finished
+        }
 
         public void Initialize()
         {
@@ -148,27 +152,7 @@ namespace CyberOptix.Pages
         private void BuildGlowColors()
         {
             var s = AppSettings.Current;
-            panelGlowColors.Children.Clear();
-            foreach (var (name, hex) in ThemeService.Accents)
-            {
-                ThemeService.TryParse(hex, out var color);
-                var swatch = new RadioButton
-                {
-                    GroupName = "Glow",
-                    Style = (Style)FindResource("Swatch"),
-                    Background = new SolidColorBrush(color),
-                    Tag = hex,
-                    ToolTip = name,
-                    IsChecked = string.Equals(hex, s.DockGlowColor, StringComparison.OrdinalIgnoreCase),
-                };
-                swatch.Checked += (_, _) =>
-                {
-                    if (_loading) return;
-                    SetGlowColor((string)swatch.Tag);
-                };
-                panelGlowColors.Children.Add(swatch);
-            }
-            txtGlow.Text = s.DockGlowColor;
+            wheelGlow.Hex = s.DockGlowColor;
             panelGlow.IsEnabled = s.DockGlow;
             panelGlow.Opacity = s.DockGlow ? 1 : 0.5;
         }
@@ -176,11 +160,9 @@ namespace CyberOptix.Pages
         private void SetGlowColor(string hex)
         {
             AppSettings.Current.DockGlowColor = hex.ToUpperInvariant();
-            txtGlow.Text = AppSettings.Current.DockGlowColor;
             AppSettings.Save();
             DockService.Apply();
         }
-
         private void GlowMediaChanged(object sender, RoutedEventArgs e)
         {
             if (_loading) return;
@@ -198,30 +180,6 @@ namespace CyberOptix.Pages
             panelGlow.Opacity = AppSettings.Current.DockGlow ? 1 : 0.5;
             AppSettings.Save();
             DockService.Apply();
-        }
-
-        private void GlowKeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Enter) ApplyTypedGlow();
-        }
-
-        private void GlowLostFocus(object sender, RoutedEventArgs e) => ApplyTypedGlow();
-
-        private void ApplyTypedGlow()
-        {
-            if (_loading) return;
-            var text = txtGlow.Text.Trim();
-            if (!text.StartsWith('#')) text = "#" + text;
-            if (!ThemeService.TryParse(text, out _) || text.Length is not (7 or 9))
-            {
-                txtGlow.Text = AppSettings.Current.DockGlowColor;   // not a color: keep the one it had
-                return;
-            }
-            SetGlowColor(text);
-            _loading = true;
-            foreach (var r in panelGlowColors.Children.OfType<RadioButton>())
-                r.IsChecked = string.Equals((string)r.Tag, AppSettings.Current.DockGlowColor, StringComparison.OrdinalIgnoreCase);
-            _loading = false;
         }
 
         // ---------- extra system icons ----------

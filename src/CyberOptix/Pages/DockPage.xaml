@@ -65,11 +65,8 @@
                     <CheckBox x:Name="chkGlow" Content="Border glow" Tag="A soft glow around the outside edge of the dock. With the switch below on and something playing, it takes the album cover's color; otherwise it uses the color picked below." Click="GlowChanged"/>
                     <StackPanel x:Name="panelGlow" Margin="28,2,0,14">
                         <CheckBox x:Name="chkGlowMedia" Content="Match the Media Player Color" Tag="While music or a video is playing, the dock's glow takes the main color of its album cover or thumbnail. Off, it always uses the glow color you pick below." Click="GlowMediaChanged" Margin="0,0,0,10"/>
-                        <WrapPanel x:Name="panelGlowColors"/>
-                        <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                            <TextBlock Text="Glow color" VerticalAlignment="Center" Margin="0,0,12,0" Foreground="{DynamicResource TextDimBrush}"/>
-                            <TextBox x:Name="txtGlow" Width="110" Tag="#RRGGBB" KeyDown="GlowKeyDown" LostFocus="GlowLostFocus"/>
-                        </StackPanel>
+                        <TextBlock Text="Glow color" Margin="0,0,0,8" Foreground="{DynamicResource TextDimBrush}"/>
+                        <ctl:ColorWheel x:Name="wheelGlow" DefaultHex="#14B8D4"/>
                     </StackPanel>
                     <Border Style="{StaticResource Divider}"/>
                     <CheckBox x:Name="chkBadges" Content="Show badges on dock apps" Tag="Puts a number on an app's icon when its window title starts with one, like (3). Windows keeps its own taskbar badges to itself, so this covers apps that show their count in the title." Checked="Changed" Unchecked="Changed"/>
