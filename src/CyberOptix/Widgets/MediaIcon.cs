@@ -42,16 +42,13 @@ namespace CyberOptix.Widgets
                     break;
 
                 case "soundcloud":
-                    board.Children.Add(Tile(Brushes.Black, 5));
-                    // the bars of the waveform, then the cloud
-                    // drawn a little smaller than the tile, so its rounded corners never touch the cloud
-                    var art = new Canvas { Width = 24, Height = 24, RenderTransformOrigin = new Point(0.5, 0.5), RenderTransform = new TransformGroup { Children = { new TranslateTransform(-0.45, 0), new ScaleTransform(0.62, 0.62) } } };
-                    double[] xs = { 3.0, 5.0, 7.0, 9.0, 11.0 };
-                    double[] tops = { 11.2, 9.6, 8.2, 7.0, 8.2 };
+                    board.Children.Add(Tile(Brushes.Black, 3.6));
+                    // seven rounded bars that rise to the cloud, then the cloud with its big round lobe on the right (about two thirds of the tile wide)
+                    double[] xs = { 4.9, 6.2, 7.5, 8.8, 10.1, 11.4 };
+                    double[] tops = { 11.4, 10.4, 9.5, 8.8, 8.4, 8.2 };
                     for (int i = 0; i < xs.Length; i++)
-                        art.Children.Add(Stroke($"M{xs[i]},{tops[i]} L{xs[i]},17", Brushes.White, 1.2));
-                    art.Children.Add(Fill("M12.6,6.9 C14.7,6.9 16.4,8.2 16.9,10.0 C17.4,9.8 17.9,9.7 18.5,9.7 C20.4,9.7 21.9,11.2 21.9,13.2 C21.9,15.2 20.4,16.8 18.5,16.8 L12.6,16.8 Z", Brushes.White));
-                    board.Children.Add(art);
+                        board.Children.Add(Stroke($"M{xs[i]},{tops[i]} L{xs[i]},15.4", Brushes.White, 0.8));
+                    board.Children.Add(Fill("M12.4,15.7 L12.4,9.3 C13.2,8.6 14.2,8.2 15.3,8.2 C17.0,8.2 18.4,9.3 18.8,10.9 C19.7,11.0 20.2,12.0 20.2,13.4 A2.3,2.3 0 0 1 17.9,15.7 Z", Brushes.White));
                     break;
 
                 case "itunes":   // Apple Music
