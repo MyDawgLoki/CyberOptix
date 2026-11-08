@@ -453,7 +453,7 @@ $result | ConvertTo-Json -Depth 6 | Out-File -Encoding utf8 $outFile
 
             // 4. Forget what was put back, so the app matches Windows again.
             if (opt.Tweaks && opt.Services) s.AppliedTweaks.Clear();
-            if (opt.Tweaks) touched.Remove("profile");
+            if (opt.Tweaks) { touched.Remove("profile"); WindowsAccentService.Restore(); s.SyncWindowsAccent = false; }
             if (opt.Remaps) { touched.Remove("remap"); s.Remaps.Clear(); }
             if (opt.Pointer) touched.Remove("pointer");
             if (opt.Scrolling) touched.Remove("scroll");

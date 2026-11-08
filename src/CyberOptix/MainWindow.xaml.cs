@@ -90,6 +90,7 @@ namespace CyberOptix
                 pgWindows.Initialize();
                 pgSettings.Initialize();
                 if (!AppSettings.Current.KeepWindowsSettingsOnRelaunch) DisplayColorService.ApplySaved(); // put back the colors the user set on each display (unless asked to leave Windows alone)
+                if (AppSettings.Current.SyncWindowsAccent && !AppSettings.Current.KeepWindowsSettingsOnRelaunch) WindowsAccentService.Apply(AppSettings.Current.AccentHex);
                 TaskbarTakeoverService.RecoverIfStranded(); // an earlier crash must never leave the Windows taskbar hidden
                 pgHardware.Initialize(); // pointer, cursor, lighting, hot-keys and remaps
                 pgDock.Initialize();

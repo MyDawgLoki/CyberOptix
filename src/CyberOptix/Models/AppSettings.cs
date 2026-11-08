@@ -56,7 +56,10 @@ namespace CyberOptix.Models
         /// <summary>Do not change my Windows settings when CyberOptix starts: nothing saved is re-applied to Windows at launch (display colors and the like).</summary>
         public bool KeepWindowsSettingsOnRelaunch { get; set; }
 
-        public bool DockIconSizeV2 { get; set; }                   // set once the old default size (26) has been moved to the smaller default
+        /// <summary>Set Windows' accent color to the CyberOptix color, so Start, Search, the taskbar and window title bars (Windows Settings too) share it. Off: Windows keeps its own color.</summary>
+        public bool SyncWindowsAccent { get; set; }
+
+        public bool DockIconSizeV2 { get; set; }                 // set once the old default size (26) has been moved to the smaller default
         public bool DockShowRunning { get; set; } = true;
         public bool DockShowRecycleBin { get; set; } = true;       // the Recycle Bin on the dock: click to open, drop files on it to delete them
         public bool DockHideFullscreen { get; set; } = true;

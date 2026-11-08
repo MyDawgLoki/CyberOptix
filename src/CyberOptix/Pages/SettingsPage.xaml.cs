@@ -79,6 +79,7 @@ namespace CyberOptix.Pages
             ShowStartupNote();
             chkCloseToTray.IsChecked = s.CloseToTray;
             chkKeepWindows.IsChecked = s.KeepWindowsSettingsOnRelaunch;
+            chkWindowsAccent.IsChecked = s.SyncWindowsAccent;
             cmbMinimizeTo.SelectedIndex = s.MinimizeTo == "Dock" ? 1 : s.MinimizeTo == "Tray" ? 2 : 0;
             sldPicture.Value = s.BackgroundImageOpacity;
             rowPicture.Description = string.IsNullOrWhiteSpace(s.BackgroundImagePath) ? "Using the CyberOptix wallpaper." : s.BackgroundImagePath;
@@ -439,6 +440,14 @@ namespace CyberOptix.Pages
             if (message != null) txtStatus.Text = message;
         }
 
+        private void WindowsAccentChanged(object sender, RoutedEventArgs e)
+        {
+            if (_loading) return;
+            AppSettings.Current.SyncWindowsAccent = chkWindowsAccent.IsChecked == true;
+            AppSettings.Save();
+            WindowsAccentService.Sync();
+        }
+
         private void KeepWindowsChanged(object sender, RoutedEventArgs e)
         {
             if (_loading) return;
@@ -479,6 +488,7 @@ namespace CyberOptix.Pages
         {
             ThemeService.Apply();
             AppSettings.Save();
+            if (AppSettings.Current.SyncWindowsAccent) WindowsAccentService.Apply(AppSettings.Current.AccentHex);
             txtStatus.Text = "";
         }
     }
