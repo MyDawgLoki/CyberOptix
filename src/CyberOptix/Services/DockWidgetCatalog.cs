@@ -198,7 +198,7 @@ namespace CyberOptix.Services
         private static List<DockWidgetDef> Core() => new List<DockWidgetDef>
         {
             // ---------- live information ----------
-            new(MediaId, Live, "Media controls", "A music note that opens the Media Player widget on your desktop (album art, the track, previous / play / next, and buttons for YouTube, Spotify, SoundCloud, iTunes and Suno) if it is not open already.",
+            new(MediaId, Live, "Media controls", "A music note that opens the Media Player widget on your desktop (album art, the track, previous / play / next, and buttons for YouTube, Spotify, SoundCloud, Apple Music and Suno) if it is not open already.",
                 "", () => { }),
             new("cyberoptix", Software, "CyberOptix", "Opens the CyberOptix window.", "",
                 () => { try { (System.Windows.Application.Current.MainWindow as MainWindow)?.ShowFromTray(); } catch { } }, null, null, Environment.ProcessPath),

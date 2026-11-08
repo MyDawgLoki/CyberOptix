@@ -15,7 +15,7 @@ namespace CyberOptix.Services
             new("youtube", "YouTube", "", "#E62117", Array.Empty<string>(), "https://www.youtube.com"),
             new("spotify", "Spotify", "", "#1DB954", new[] { "spotify" }, "https://open.spotify.com", "Spotify"),
             new("soundcloud", "SoundCloud", "", "#FF5500", Array.Empty<string>(), "https://soundcloud.com"),
-            new("itunes", "iTunes", "", "#F2559E", new[] { "itunes", "applemusic" }, "https://music.apple.com", "iTunes|Apple Music"),
+            new("itunes", "Apple Music", "", "#F2559E", new[] { "itunes", "applemusic" }, "https://music.apple.com", "iTunes|Apple Music"),
             new("suno", "Suno", "", "#7C5CFF", Array.Empty<string>(), "https://suno.com"),
         };
 

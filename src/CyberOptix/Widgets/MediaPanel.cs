@@ -197,17 +197,9 @@ namespace CyberOptix.Widgets
             {
                 var launcher = l;
                 bool app = MediaLaunchers.InstalledProtocol(launcher) != null;
-                ThemeService.TryParse(launcher.ColorHex, out var color);
 
-                var disc = new Border
-                {
-                    Width = 38, Height = 38, CornerRadius = new CornerRadius(19), Background = new SolidColorBrush(color), HorizontalAlignment = HorizontalAlignment.Center,
-                    Child = new TextBlock
-                    {
-                        Text = launcher.Glyph, FontFamily = (FontFamily)Application.Current.FindResource("IconFont"), FontSize = 17, Foreground = Brushes.White,
-                        HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center,
-                    },
-                };
+                var disc = MediaIcon.Create(launcher.Id, 38);   // the service's own logo
+                disc.HorizontalAlignment = HorizontalAlignment.Center;
                 var name = new TextBlock { Text = launcher.Name, FontSize = 10, TextAlignment = TextAlignment.Center, Margin = new Thickness(0, 4, 0, 0), Opacity = 0.75 };
                 var stack = new StackPanel();
                 stack.Children.Add(disc);
