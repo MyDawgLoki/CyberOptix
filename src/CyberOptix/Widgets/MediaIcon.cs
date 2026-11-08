@@ -30,8 +30,9 @@ namespace CyberOptix.Widgets
             switch (id)
             {
                 case "youtube":
-                    board.Children.Add(Tile(Brush("#FF0000"), 6));
-                    board.Children.Add(Fill("M9.6,7.6 L9.6,16.4 L17.2,12 Z", Brushes.White));
+                    board.Children.Add(Tile(Brushes.Black, 6));
+                    board.Children.Add(Fill("M6.8,6.6 H17.2 A3.2,3.2 0 0 1 20.4,9.8 V14.2 A3.2,3.2 0 0 1 17.2,17.4 H6.8 A3.2,3.2 0 0 1 3.6,14.2 V9.8 A3.2,3.2 0 0 1 6.8,6.6 Z", Brushes.White));   // the white rounded screen
+                    board.Children.Add(Fill("M10.2,9.4 L10.2,14.6 L14.8,12 Z", Brushes.Black));                                                                                                  // with its black play triangle
                     break;
 
                 case "spotify":
@@ -52,19 +53,12 @@ namespace CyberOptix.Widgets
                     break;
 
                 case "itunes":   // Apple Music
-                    board.Children.Add(Tile(new LinearGradientBrush(Color.FromRgb(0xFF, 0xFF, 0xFF), Color.FromRgb(0xE4, 0xE4, 0xE8), 90), 5.4));
-                    board.Children.Add(Fill("M16.9,4.6 L9.3,6.2 C8.9,6.3 8.7,6.6 8.7,7.0 L8.7,15.3 C8.2,15.1 7.6,15.0 7.0,15.1 C5.5,15.4 4.6,16.5 4.8,17.8 C5.1,19.1 6.5,19.9 8.0,19.6 C9.5,19.3 10.4,18.2 10.4,16.9 L10.4,9.8 L15.5,8.7 L15.5,13.7 C15.0,13.5 14.4,13.4 13.8,13.5 C12.3,13.8 11.4,14.9 11.6,16.2 C11.9,17.5 13.3,18.3 14.8,18.0 C16.3,17.7 17.2,16.6 17.2,15.3 L17.2,5.4 C17.2,4.9 17.1,4.5 16.9,4.6 Z", Brushes.Black));
+                    board.Children.Add(Tile(Brushes.Black, 5.4));
+                    board.Children.Add(Fill("M16.9,4.6 L9.3,6.2 C8.9,6.3 8.7,6.6 8.7,7.0 L8.7,15.3 C8.2,15.1 7.6,15.0 7.0,15.1 C5.5,15.4 4.6,16.5 4.8,17.8 C5.1,19.1 6.5,19.9 8.0,19.6 C9.5,19.3 10.4,18.2 10.4,16.9 L10.4,9.8 L15.5,8.7 L15.5,13.7 C15.0,13.5 14.4,13.4 13.8,13.5 C12.3,13.8 11.4,14.9 11.6,16.2 C11.9,17.5 13.3,18.3 14.8,18.0 C16.3,17.7 17.2,16.6 17.2,15.3 L17.2,5.4 C17.2,4.9 17.1,4.5 16.9,4.6 Z", Brushes.White));
                     break;
 
                 case "suno":
-                    board.Children.Add(new Border
-                    {
-                        Width = 24, Height = 24, CornerRadius = new CornerRadius(12),
-                        Background = new LinearGradientBrush(new GradientStopCollection
-                        {
-                            new GradientStop(Color.FromRgb(0xFF, 0xC1, 0x07), 0.0), new GradientStop(Color.FromRgb(0xFF, 0x7A, 0x1A), 0.5), new GradientStop(Color.FromRgb(0xFF, 0x2D, 0x8E), 1.0),
-                        }, new Point(0.15, 0.0), new Point(0.85, 1.0)),
-                    });
+                    board.Children.Add(Tile(Brushes.Black, 12));
                     var word = new TextBlock { Text = "SUNO", Foreground = Brushes.White, FontWeight = FontWeights.ExtraBold, FontSize = 6.6, Width = 24, TextAlignment = TextAlignment.Center };
                     Canvas.SetTop(word, 8.2);
                     board.Children.Add(word);
