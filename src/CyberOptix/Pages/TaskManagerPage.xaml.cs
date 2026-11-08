@@ -58,6 +58,7 @@ namespace CyberOptix.Pages
             secProcs.Visibility = rbTabProcs.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
             secStartup.Visibility = rbTabStartup.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
             secClean.Visibility = rbTabClean.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
+            btnNeverTop.Visibility = secClean.Visibility;   // the Never kill list button sits beside this tab
             if (rbTabClean.IsChecked == true)
             {
                 // Always open on the clean-up list, not on the Never kill list.

@@ -32,13 +32,16 @@
         <StackPanel Margin="24,8,24,0">
             <TextBlock Text="Task Manager" Style="{StaticResource PageTitle}"/>
             <TextBlock Text="End programs that are stuck or heavy, and choose which apps start with Windows." Style="{StaticResource PageSub}"/>
-            <Border Background="#14000000" BorderBrush="{DynamicResource StrokeBrush}" BorderThickness="1" CornerRadius="10" Padding="3" HorizontalAlignment="Left" Margin="0,2,0,12">
+            <StackPanel Orientation="Horizontal" Margin="0,2,0,12">
+            <Border Background="#14000000" BorderBrush="{DynamicResource StrokeBrush}" BorderThickness="1" CornerRadius="10" Padding="3" HorizontalAlignment="Left">
                 <StackPanel Orientation="Horizontal">
                     <RadioButton x:Name="rbTabProcs" Content="Processes" IsChecked="True" GroupName="TmTab" Style="{StaticResource Segment}" Checked="TabChanged"/>
                     <RadioButton x:Name="rbTabStartup" Content="Start-up apps" GroupName="TmTab" Style="{StaticResource Segment}" Checked="TabChanged"/>
                     <RadioButton x:Name="rbTabClean" Content="Free up resources" GroupName="TmTab" Style="{StaticResource Segment}" Checked="TabChanged"/>
                 </StackPanel>
             </Border>
+            <Button x:Name="btnNeverTop" Content="Never kill list" Margin="10,0,0,0" VerticalAlignment="Center" Visibility="Collapsed" Click="NeverOpenClicked"/>
+            </StackPanel>
         </StackPanel>
 
     <ScrollViewer x:Name="scrollMain" Grid.Row="1" VerticalScrollBarVisibility="Auto">
@@ -148,7 +151,6 @@
             <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
                 <Button x:Name="btnCleanScan" Content="Scan again" Click="CleanScanClicked"/>
                 <Button Content="Untick all" Margin="10,0,0,0" Click="CleanUntickClicked"/>
-                <Button Content="Never kill list" Margin="10,0,0,0" Click="NeverOpenClicked"/>
                 <Button x:Name="btnCleanRun" Content="Run once" Style="{StaticResource PrimaryButton}" Margin="24,0,0,0" Click="CleanRunClicked"/>
                 <Button x:Name="btnCleanRestore" Content="Restore what was stopped" Margin="10,0,0,0" Click="CleanRestoreClicked"/>
             </StackPanel>
