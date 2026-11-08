@@ -44,7 +44,7 @@ namespace CyberOptix.Services
         {
             (Accent, "AccentColorMenu"), (Accent, "StartColorMenu"), (Accent, "AccentPalette"),
             (Dwm, "AccentColor"), (Dwm, "ColorizationColor"), (Dwm, "ColorizationAfterglow"), (Dwm, "ColorPrevalence"),
-            (Personalize, "ColorPrevalence"),
+            (Personalize, "ColorPrevalence"), (Personalize, "AppsUseLightTheme"), (Personalize, "SystemUsesLightTheme"), (Personalize, "EnableTransparency"),
         };
 
         private static List<Saved> Read()
@@ -93,6 +93,13 @@ namespace CyberOptix.Services
                 if (string.Equals(hex, _lastHex, StringComparison.OrdinalIgnoreCase) && HasBackup) return;   // already this color
                 _lastHex = hex;
                 if (!HasBackup) File.WriteAllText(BackupPath, JsonSerializer.Serialize(Read(), Json));
+                else
+                {
+                    // a copy made by an earlier version may lack the newer values: add them as they are now, before they change
+                    var have = JsonSerializer.Deserialize<List<Saved>>(File.ReadAllText(BackupPath)) ?? new();
+                    var extra = Read().Where(n => !have.Any(h => h.Sub == n.Sub && h.Name == n.Name)).ToList();
+                    if (extra.Count > 0) { have.AddRange(extra); File.WriteAllText(BackupPath, JsonSerializer.Serialize(have, Json)); }
+                }
 
                 uint abgr = 0xFF000000u | (uint)(c.B << 16) | (uint)(c.G << 8) | c.R;
                 uint argb = 0xC4000000u | (uint)(c.R << 16) | (uint)(c.G << 8) | c.B;
@@ -112,6 +119,9 @@ namespace CyberOptix.Services
                 Write(Dwm, "ColorizationAfterglow", Dword(argb), RegistryValueKind.DWord);
                 Write(Dwm, "ColorPrevalence", 1, RegistryValueKind.DWord);        // title bars and window borders
                 Write(Personalize, "ColorPrevalence", 1, RegistryValueKind.DWord); // Start and the taskbar
+                Write(Personalize, "AppsUseLightTheme", 0, RegistryValueKind.DWord);     // File Explorer, Settings and other Windows apps: dark
+                Write(Personalize, "SystemUsesLightTheme", 0, RegistryValueKind.DWord);  // Start and the taskbar show the accent color only in dark mode
+                Write(Personalize, "EnableTransparency", 1, RegistryValueKind.DWord);
                 Broadcast();
             }
             catch { }

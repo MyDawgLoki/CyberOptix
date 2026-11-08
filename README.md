@@ -56,7 +56,7 @@ The screens are the app's own pages drawn with its default settings, so nothing 
 - Widgets: which are on, their opacity, the weather city and units, and which media player buttons show.
 - The Optimizer's saved Gaming and Universal profiles, the games list, the Task Manager "Never kill" list and the Free up resources choices.
 - Hotkeys, Window Manager gap, Glass Cursor settings, and RGB lighting (put back at launch).
-- "Use the CyberOptix color for Windows" (App Settings, on by default; switch it off to keep Windows' own colors): sets Windows' accent color so Start, Search, the taskbar and window title bars share your CyberOptix color. Your own Windows colors are saved first and put back when you switch it off or use Restore.
+- "Use the CyberOptix color for Windows" (App Settings, on by default; switch it off to keep Windows' own colors): sets Windows' accent color so Start, Search, the taskbar and window title bars share your CyberOptix color, and puts Windows in dark mode so File Explorer, Settings and other Windows apps match. Your own Windows colors are saved first and put back when you switch it off or use Restore.
 - Start with Windows, start quietly, close to tray and where the window minimizes to.
 
 **Sticks, but Windows is the one keeping it** (CyberOptix changed it once; it does not re-apply it)
