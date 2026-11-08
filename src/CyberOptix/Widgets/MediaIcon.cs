@@ -44,11 +44,14 @@ namespace CyberOptix.Widgets
                 case "soundcloud":
                     board.Children.Add(Tile(Brushes.Black, 5));
                     // the bars of the waveform, then the cloud
+                    // drawn a little smaller than the tile, so its rounded corners never touch the cloud
+                    var art = new Canvas { Width = 24, Height = 24, RenderTransformOrigin = new Point(0.5, 0.5), RenderTransform = new ScaleTransform(0.74, 0.74) };
                     double[] xs = { 3.0, 5.0, 7.0, 9.0, 11.0 };
                     double[] tops = { 11.2, 9.6, 8.2, 7.0, 8.2 };
                     for (int i = 0; i < xs.Length; i++)
-                        board.Children.Add(Stroke($"M{xs[i]},{tops[i]} L{xs[i]},17", Brushes.White, 1.1));
-                    board.Children.Add(Fill("M12.6,6.9 C14.7,6.9 16.4,8.2 16.9,10.0 C17.4,9.8 17.9,9.7 18.5,9.7 C20.4,9.7 21.9,11.2 21.9,13.2 C21.9,15.2 20.4,16.8 18.5,16.8 L12.6,16.8 Z", Brushes.White));
+                        art.Children.Add(Stroke($"M{xs[i]},{tops[i]} L{xs[i]},17", Brushes.White, 1.2));
+                    art.Children.Add(Fill("M12.6,6.9 C14.7,6.9 16.4,8.2 16.9,10.0 C17.4,9.8 17.9,9.7 18.5,9.7 C20.4,9.7 21.9,11.2 21.9,13.2 C21.9,15.2 20.4,16.8 18.5,16.8 L12.6,16.8 Z", Brushes.White));
+                    board.Children.Add(art);
                     break;
 
                 case "itunes":   // Apple Music
