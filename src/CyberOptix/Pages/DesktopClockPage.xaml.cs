@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -15,7 +15,11 @@ namespace CyberOptix.Pages
     {
         private bool _loading = true;
 
-        public DesktopClockPage() => InitializeComponent();
+        public DesktopClockPage()
+        {
+            InitializeComponent();
+            wheelClock.ColorCommitted += hex => { if (!_loading) SetColor(hex); };   // the clock color is saved when a choice is finished
+        }
 
         public void Initialize()
         {
@@ -33,8 +37,7 @@ namespace CyberOptix.Pages
 
             foreach (ComboBoxItem item in cmbColor.Items) if ((string)item.Tag == s.DesktopClockColorMode) cmbColor.SelectedItem = item;
             if (cmbColor.SelectedItem == null) cmbColor.SelectedIndex = 0;
-            BuildSwatches();
-            txtColor.Text = s.DesktopClockColor;
+            wheelClock.Hex = s.DesktopClockColor;
 
             BuildAnchors();
             map.Moved += () =>
@@ -172,31 +175,9 @@ namespace CyberOptix.Pages
             Commit();
         }
 
-        private void BuildSwatches()
-        {
-            panelSwatches.Children.Clear();
-            var s = AppSettings.Current;
-            foreach (var (name, hex) in ThemeService.Accents.Concat(new[] { ("White", "#FFFFFF"), ("Black", "#000000") }))
-            {
-                ThemeService.TryParse(hex, out var color);
-                var swatch = new RadioButton
-                {
-                    GroupName = "ClockColor", Style = (Style)FindResource("Swatch"), Background = new SolidColorBrush(color), Tag = hex, ToolTip = name,
-                    IsChecked = string.Equals(hex, s.DesktopClockColor, StringComparison.OrdinalIgnoreCase),
-                };
-                swatch.Checked += (_, _) =>
-                {
-                    if (_loading) return;
-                    SetColor((string)swatch.Tag);
-                };
-                panelSwatches.Children.Add(swatch);
-            }
-        }
-
         private void SetColor(string hex)
         {
             AppSettings.Current.DesktopClockColor = hex.ToUpperInvariant();
-            txtColor.Text = AppSettings.Current.DesktopClockColor;
             Commit();
         }
 
@@ -249,29 +230,5 @@ namespace CyberOptix.Pages
 
         private void SliderChanged(object sender, RoutedEventArgs e) => Changed(sender, e);
         private void SelectionChanged(object sender, SelectionChangedEventArgs e) => Changed(sender, e);
-
-        private void HexKeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Enter) ApplyHex();
-        }
-
-        private void HexLostFocus(object sender, RoutedEventArgs e) => ApplyHex();
-
-        private void ApplyHex()
-        {
-            if (_loading) return;
-            var text = txtColor.Text.Trim();
-            if (!text.StartsWith('#')) text = "#" + text;
-            if (!ThemeService.TryParse(text, out _) || text.Length is not (7 or 9))
-            {
-                txtColor.Text = AppSettings.Current.DesktopClockColor;   // not a color: keep the one it had
-                return;
-            }
-            SetColor(text);
-            _loading = true;
-            foreach (var r in panelSwatches.Children.OfType<RadioButton>())
-                r.IsChecked = string.Equals((string)r.Tag, AppSettings.Current.DesktopClockColor, StringComparison.OrdinalIgnoreCase);
-            _loading = false;
-        }
     }
 }

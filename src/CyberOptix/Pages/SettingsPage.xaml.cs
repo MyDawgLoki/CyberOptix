@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -30,6 +30,8 @@ namespace CyberOptix.Pages
             InitializeComponent();
             // The driver row shows only while PawnIO is installed, which can change while the app runs (installed from the Monitor page).
             IsVisibleChanged += (_, _) => { if (IsVisible) rowPawnIo.Visibility = PawnIoService.IsInstalled() ? Visibility.Visible : Visibility.Collapsed; };
+            wheelAccent.ColorCommitted += hex => { if (_loading) return; AppSettings.Current.AccentHex = hex.ToUpperInvariant(); Commit(); };
+            wheelWindowGlow.ColorCommitted += hex => { if (!_loading) SetWindowGlow(hex); };
         }
 
         public void Initialize()
@@ -37,9 +39,7 @@ namespace CyberOptix.Pages
             _loading = true;
             var s = AppSettings.Current;
 
-            panelAccents.Children.Clear();
-            foreach (var (name, hex) in ThemeService.Accents)
-                panelAccents.Children.Add(MakeSwatch("Accent", name, hex, string.Equals(hex, s.AccentHex, StringComparison.OrdinalIgnoreCase), AccentChecked));
+            wheelAccent.Hex = s.AccentHex;
 
             panelTints.Children.Clear();
             foreach (var (name, hex) in ThemeService.Tints)
@@ -56,10 +56,7 @@ namespace CyberOptix.Pages
             txtCard.Text = s.CardHex;
             sldCard.Value = s.CardOpacity;
             chkWindowGlow.IsChecked = s.WindowGlow;
-            panelWindowGlow.Children.Clear();
-            foreach (var (name, hex) in ThemeService.Accents)
-                panelWindowGlow.Children.Add(MakeSwatch("WinGlow", name, hex, string.Equals(hex, s.WindowGlowColor, StringComparison.OrdinalIgnoreCase), WindowGlowSwatch));
-            txtWindowGlow.Text = s.WindowGlowColor;
+            wheelWindowGlow.Hex = s.WindowGlowColor;
             rowPawnIo.Visibility = PawnIoService.IsInstalled() ? Visibility.Visible : Visibility.Collapsed;
             chkMatchMedia.IsChecked = s.MatchMediaColor;
             chkMatchAccent.IsChecked = s.MatchMediaAccent;
@@ -67,7 +64,6 @@ namespace CyberOptix.Pages
             chkMatchText.IsChecked = s.MatchMediaText;
             chkMatchGlow.IsChecked = s.MatchMediaGlow;
 
-            txtAccent.Text = s.AccentHex;
             cmbBackdrop.ItemsSource = ThemeService.Backdrops;
             cmbBackdrop.SelectedItem = ThemeService.Backdrops.Contains(s.Backdrop) ? s.Backdrop : ThemeService.Backdrops[^1];
             sldGlass.Value = s.GlassTint;
@@ -104,42 +100,11 @@ namespace CyberOptix.Pages
             WindowGlow.Refresh();
         }
 
-        private void WindowGlowSwatch(object sender, RoutedEventArgs e)
-        {
-            if (_loading) return;
-            SetWindowGlow((string)((RadioButton)sender).Tag);
-        }
-
         private void SetWindowGlow(string hex)
         {
             AppSettings.Current.WindowGlowColor = hex.ToUpperInvariant();
-            txtWindowGlow.Text = AppSettings.Current.WindowGlowColor;
             AppSettings.Save();
             WindowGlow.Refresh();
-        }
-
-        private void WindowGlowKeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Enter) ApplyTypedWindowGlow();
-        }
-
-        private void WindowGlowLostFocus(object sender, RoutedEventArgs e) => ApplyTypedWindowGlow();
-
-        private void ApplyTypedWindowGlow()
-        {
-            if (_loading) return;
-            var text = txtWindowGlow.Text.Trim();
-            if (!text.StartsWith('#')) text = "#" + text;
-            if (!ThemeService.TryParse(text, out _) || text.Length is not (7 or 9))
-            {
-                txtWindowGlow.Text = AppSettings.Current.WindowGlowColor;   // not a color: keep the one it had
-                return;
-            }
-            SetWindowGlow(text);
-            _loading = true;
-            foreach (var r in panelWindowGlow.Children.OfType<RadioButton>())
-                r.IsChecked = string.Equals((string)r.Tag, AppSettings.Current.WindowGlowColor, StringComparison.OrdinalIgnoreCase);
-            _loading = false;
         }
 
         private static RadioButton MakeSwatch(string group, string name, string hex, bool isChecked, RoutedEventHandler onChecked)
@@ -158,50 +123,10 @@ namespace CyberOptix.Pages
             return swatch;
         }
 
-        private void AccentChecked(object sender, RoutedEventArgs e)
-        {
-            if (_loading) return;
-            var hex = (string)((RadioButton)sender).Tag;
-            txtAccent.Text = hex;
-            AppSettings.Current.AccentHex = hex;
-            Commit();
-        }
-
         private void TintChecked(object sender, RoutedEventArgs e)
         {
             if (_loading) return;
             AppSettings.Current.TintHex = (string)((RadioButton)sender).Tag;
-            Commit();
-        }
-
-        private void AccentKeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Enter) ApplyCustomAccent();
-        }
-
-        private void AccentLostFocus(object sender, RoutedEventArgs e) => ApplyCustomAccent();
-
-        private void ApplyCustomAccent()
-        {
-            if (_loading) return;
-            var text = txtAccent.Text.Trim();
-            if (!text.StartsWith('#')) text = "#" + text;
-
-            if (!ThemeService.TryParse(text, out _) || text.Length is not (7 or 9))
-            {
-                txtStatus.Text = "That isn't a valid hex color. Use a value like #FF6B35.";
-                txtAccent.Text = AppSettings.Current.AccentHex;
-                return;
-            }
-
-            AppSettings.Current.AccentHex = text.ToUpperInvariant();
-            txtAccent.Text = AppSettings.Current.AccentHex;
-
-            // Un-tick the presets unless the typed color is one of them.
-            _loading = true;
-            foreach (RadioButton r in panelAccents.Children.OfType<RadioButton>())
-                r.IsChecked = string.Equals((string)r.Tag, AppSettings.Current.AccentHex, StringComparison.OrdinalIgnoreCase);
-            _loading = false;
             Commit();
         }
 

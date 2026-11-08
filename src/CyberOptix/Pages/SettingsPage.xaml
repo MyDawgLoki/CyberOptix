@@ -12,13 +12,11 @@
                 <StackPanel>
                     <CheckBox x:Name="chkMatchAccent" Content="Match the Media Player Color" Tag="While music or a video is playing, the accent color becomes the main color of its album cover or thumbnail. Nothing changes until something starts playing, and it goes back when it stops." Click="MatchMediaChanged"/>
                     <Border Style="{StaticResource Divider}"/>
-                    <ctl:SettingRow Title="Color" Description="Used for switches, sliders, buttons and the selected item. Turquoise is the default.">
-                        <WrapPanel x:Name="panelAccents" MaxWidth="260" HorizontalAlignment="Right"/>
-                    </ctl:SettingRow>
-                    <Border Style="{StaticResource Divider}"/>
-                    <ctl:SettingRow Title="Custom color" Description="Any hex color, for example #FF6B35. Press Enter to apply.">
-                        <TextBox x:Name="txtAccent" Width="140" Tag="#RRGGBB" KeyDown="AccentKeyDown" LostFocus="AccentLostFocus"/>
-                    </ctl:SettingRow>
+                    <StackPanel Margin="16,12,16,14">
+                        <TextBlock Text="Color" Foreground="{DynamicResource TextBrush}"/>
+                        <TextBlock Style="{StaticResource Note}" Margin="0,2,0,10" Text="Used for switches, sliders, buttons and the selected item. Turquoise is the default. You can also type a hex color, for example #FF6B35."/>
+                        <ctl:ColorWheel x:Name="wheelAccent" DefaultHex="#14B8D4"/>
+                    </StackPanel>
                 </StackPanel>
             </Border>
 
@@ -95,13 +93,11 @@
                     <Border Style="{StaticResource Divider}"/>
                     <CheckBox x:Name="chkMatchGlow" Content="Match the Media Player Color" Tag="While music or a video is playing, the glowing edge takes the main color of its album cover or thumbnail. Off, it always uses the glow color below." Click="MatchMediaChanged"/>
                     <Border Style="{StaticResource Divider}"/>
-                    <ctl:SettingRow Title="Glow color" Description="Used when nothing is playing, or when matching the media player is off.">
-                        <WrapPanel x:Name="panelWindowGlow" MaxWidth="260" HorizontalAlignment="Right"/>
-                    </ctl:SettingRow>
-                    <Border Style="{StaticResource Divider}"/>
-                    <ctl:SettingRow Title="Custom glow color" Description="Any hex color. Press Enter to apply.">
-                        <TextBox x:Name="txtWindowGlow" Width="140" Tag="#RRGGBB" KeyDown="WindowGlowKeyDown" LostFocus="WindowGlowLostFocus"/>
-                    </ctl:SettingRow>
+                    <StackPanel Margin="16,12,16,14">
+                        <TextBlock Text="Glow color" Foreground="{DynamicResource TextBrush}"/>
+                        <TextBlock Style="{StaticResource Note}" Margin="0,2,0,10" Text="Used when nothing is playing, or when matching the media player is off. You can also type a hex color."/>
+                        <ctl:ColorWheel x:Name="wheelWindowGlow" DefaultHex="#14B8D4"/>
+                    </StackPanel>
                 </StackPanel>
             </Border>
 

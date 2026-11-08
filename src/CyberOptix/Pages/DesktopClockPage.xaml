@@ -54,11 +54,7 @@
                         </ComboBox>
                     </ctl:SettingRow>
                     <StackPanel x:Name="panelCustom" Margin="4,6,0,6">
-                        <WrapPanel x:Name="panelSwatches" MaxWidth="560"/>
-                        <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
-                            <TextBlock Text="Hex" VerticalAlignment="Center" Foreground="{DynamicResource TextDimBrush}" Margin="0,0,10,0"/>
-                            <TextBox x:Name="txtColor" Width="110" KeyDown="HexKeyDown" LostFocus="HexLostFocus"/>
-                        </StackPanel>
+                        <ctl:ColorWheel x:Name="wheelClock" DefaultHex="#FFFFFF"/>
                     </StackPanel>
                 </StackPanel>
             </Border>
