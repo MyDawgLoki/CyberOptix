@@ -147,6 +147,9 @@ namespace CyberOptix.Services
                 var list = JsonSerializer.Deserialize<List<Saved>>(File.ReadAllText(BackupPath)) ?? new();
                 foreach (var s in list)
                 {
+                    // the copy is treated as data: only the values CyberOptix itself changes are put back, nothing else it might name
+                    if (!Touched.Any(t => t.Sub == s.Sub && t.Name == s.Name)) continue;
+                    if (s.Exists && s.Kind != nameof(RegistryValueKind.Binary) && s.Kind != nameof(RegistryValueKind.DWord)) continue;
                     try
                     {
                         using var k = Registry.CurrentUser.CreateSubKey(s.Sub);
