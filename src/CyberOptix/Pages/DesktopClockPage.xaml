@@ -52,7 +52,6 @@
                         <ctl:ColorWheel x:Name="wheelClock" DefaultHex="#FFFFFF"/>
                     </StackPanel>
                 </StackPanel>
-                </StackPanel>
             </Border>
 
             <TextBlock Text="Position" Style="{StaticResource GroupTitle}"/>
