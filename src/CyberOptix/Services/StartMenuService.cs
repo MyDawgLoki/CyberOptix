@@ -18,6 +18,8 @@ namespace CyberOptix.Services
         [DllImport("user32.dll")] private static extern uint GetWindowThreadProcessId(IntPtr h, out uint pid);
         [DllImport("user32.dll")] private static extern bool GetWindowRect(IntPtr h, out RECT r);
         [DllImport("user32.dll")] private static extern bool IsWindowVisible(IntPtr h);
+        private delegate bool EnumProc(IntPtr h, IntPtr lParam);
+        [DllImport("user32.dll")] private static extern bool EnumWindows(EnumProc cb, IntPtr lParam);
         [DllImport("user32.dll")] private static extern IntPtr MonitorFromWindow(IntPtr h, uint flags);
         [DllImport("user32.dll")] private static extern bool GetMonitorInfo(IntPtr monitor, ref MONITORINFO info);
         [DllImport("user32.dll")] private static extern bool SetWindowPos(IntPtr h, IntPtr after, int x, int y, int cx, int cy, uint flags);
@@ -40,11 +42,18 @@ namespace CyberOptix.Services
         {
             window = IntPtr.Zero;
             var fg = GetForegroundWindow();
-            if (fg == IntPtr.Zero) return false;
+            if (fg != IntPtr.Zero)
+            {
+                var cls = new StringBuilder(64);
+                GetClassName(fg, cls, cls.Capacity);
+                if (cls.ToString() == "Windows.UI.Core.CoreWindow" && IsWindowVisible(fg) && IsHost(fg, out var search)) { window = fg; LastWasSearch = search; return true; }
+            }
+            return FindVisibleHost(out window);
+        }
 
-            var cls = new StringBuilder(64);
-            GetClassName(fg, cls, cls.Capacity);
-            if (cls.ToString() != "Windows.UI.Core.CoreWindow" || !IsWindowVisible(fg)) return false;
+        private static bool IsHost(IntPtr fg, out bool search)
+        {
+            search = false;
 
             GetWindowThreadProcessId(fg, out var pid);
             var process = OpenProcess(0x1000 /* query limited information */, false, pid);
@@ -56,10 +65,59 @@ namespace CyberOptix.Services
                 if (!QueryFullProcessImageName(process, 0, sb, ref size)) return false;
                 var path = sb.ToString();
                 foreach (var host in Hosts)
-                    if (path.EndsWith(@"\" + host, StringComparison.OrdinalIgnoreCase)) { window = fg; LastWasSearch = !host.StartsWith("StartMenu", StringComparison.OrdinalIgnoreCase); return true; }
+                    if (path.EndsWith(@"\" + host, StringComparison.OrdinalIgnoreCase)) { search = !host.StartsWith("StartMenu", StringComparison.OrdinalIgnoreCase); return true; }
                 return false;
             }
             finally { CloseHandle(process); }
+        }
+
+        private static (uint Pid, bool Search)[] _hostPids = Array.Empty<(uint, bool)>();
+        private static DateTime _pidsAt = DateTime.MinValue, _scanAt = DateTime.MinValue;
+        private static IntPtr _lastFound;
+
+        /// <summary>
+        /// The menu is not always the front window (Windows can keep the focus elsewhere while it shows Start), so also look for a visible,
+        /// menu-sized window that belongs to one of the Start or search programs. Looked up a few times a second at most.
+        /// </summary>
+        private static bool FindVisibleHost(out IntPtr window)
+        {
+            window = IntPtr.Zero;
+            var now = DateTime.UtcNow;
+            if (now - _scanAt < TimeSpan.FromMilliseconds(120)) { if (_lastFound != IntPtr.Zero && IsWindowVisible(_lastFound)) { window = _lastFound; return true; } return false; }
+            _scanAt = now;
+            if (now - _pidsAt > TimeSpan.FromSeconds(3))
+            {
+                _pidsAt = now;
+                var list = new System.Collections.Generic.List<(uint, bool)>();
+                foreach (var host in Hosts)
+                    foreach (var p in System.Diagnostics.Process.GetProcessesByName(System.IO.Path.GetFileNameWithoutExtension(host)))
+                    { list.Add(((uint)p.Id, !host.StartsWith("StartMenu", StringComparison.OrdinalIgnoreCase))); p.Dispose(); }
+                _hostPids = list.ToArray();
+            }
+            if (_hostPids.Length == 0) { _lastFound = IntPtr.Zero; return false; }
+
+            IntPtr found = IntPtr.Zero; bool foundSearch = false;
+            var pids = _hostPids;
+            EnumWindows((h, _) =>
+            {
+                if (!IsWindowVisible(h)) return true;
+                GetWindowThreadProcessId(h, out var pid);
+                foreach (var (hp, search) in pids)
+                {
+                    if (hp != pid) continue;
+                    var cls = new StringBuilder(64);
+                    GetClassName(h, cls, cls.Capacity);
+                    if (cls.ToString() != "Windows.UI.Core.CoreWindow") return true;
+                    if (!GetWindowRect(h, out var r) || r.Right - r.Left < 300 || r.Bottom - r.Top < 300) return true;
+                    found = h; foundSearch = search; return false;
+                }
+                return true;
+            }, IntPtr.Zero);
+            if (found != IntPtr.Zero && found != _lastFound) Note($"found {(foundSearch ? "search" : "start")} without it being the front window");
+            _lastFound = found;
+            if (found == IntPtr.Zero) return false;
+            window = found; LastWasSearch = foundSearch;
+            return true;
         }
 
         /// <summary>The widest gap under the menu that is treated as "the room Windows leaves for the taskbar" (a 200 % taskbar plus its margin is about 120 px).</summary>
