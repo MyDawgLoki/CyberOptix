@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -35,6 +35,13 @@ namespace CyberOptix.Services
         [DllImport("user32.dll")] private static extern void keybd_event(byte vk, byte scan, uint flags, UIntPtr extra);
         [DllImport("user32.dll")] private static extern bool SetWindowPos(IntPtr h, IntPtr after, int x, int y, int cx, int cy, uint flags);
         [DllImport("user32.dll")] private static extern bool GetWindowRect(IntPtr h, out RECT r);
+
+        [StructLayout(LayoutKind.Sequential)] private struct MONITORINFO { public int Size; public RECT Monitor; public RECT Work; public uint Flags; }
+        private delegate bool MonitorProc(IntPtr monitor, IntPtr dc, IntPtr rect, IntPtr data);
+        [DllImport("user32.dll")] private static extern bool EnumDisplayMonitors(IntPtr dc, IntPtr clip, MonitorProc cb, IntPtr data);
+        [DllImport("user32.dll")] private static extern bool GetMonitorInfo(IntPtr monitor, ref MONITORINFO info);
+        [DllImport("user32.dll")] private static extern bool SystemParametersInfo(uint action, uint param, ref RECT rect, uint flags);
+        private const uint SPI_SETWORKAREA = 0x002F, SPIF_SENDCHANGE = 0x0002;
 
         private const uint ABM_NEW = 0, ABM_REMOVE = 1, ABM_QUERYPOS = 2, ABM_SETPOS = 3, ABM_GETSTATE = 4, ABM_SETSTATE = 10;
         private const int ABS_AUTOHIDE = 1, ABS_ALWAYSONTOP = 2;
@@ -74,6 +81,56 @@ namespace CyberOptix.Services
                 AppDomain.CurrentDomain.UnhandledException += (_, _) => RestoreTaskbar();
             }
             KeepHidden();
+            _workCheckedAt = DateTime.MinValue;
+            KeepWorkArea();
+        }
+
+        // ---------- giving the taskbar's strip back ----------
+        // Hiding the taskbar's window is not enough: while Windows still counts it as a taskbar that stays on screen (auto-hide refused, for example
+        // with "a toolbar is already hidden on this side"), it keeps its strip free, and maximized windows stop short of the screen's bottom edge.
+        // So the strip is handed back by setting the work area to the whole screen, and the old work areas are kept to put back later.
+
+        private static readonly System.Collections.Generic.Dictionary<(int, int), RECT> _savedWork = new();
+        private static DateTime _workCheckedAt = DateTime.MinValue;
+
+        /// <summary>Makes the work area of every screen reach the bottom edge while the taskbar is hidden. Cheap; checked every couple of seconds at most.</summary>
+        public static void KeepWorkArea()
+        {
+            if (!_hidden) return;
+            var now = DateTime.UtcNow;
+            if (now - _workCheckedAt < TimeSpan.FromSeconds(2)) return;
+            _workCheckedAt = now;
+            try
+            {
+                var data = new APPBARDATA { cbSize = Marshal.SizeOf<APPBARDATA>(), hWnd = MainTaskbar };
+                if (((int)(ulong)SHAppBarMessage(ABM_GETSTATE, ref data) & ABS_AUTOHIDE) != 0) return;   // Windows really auto-hides it: it frees the strip itself
+                EnumDisplayMonitors(IntPtr.Zero, IntPtr.Zero, (m, _, _, _) =>
+                {
+                    var info = new MONITORINFO { Size = Marshal.SizeOf<MONITORINFO>() };
+                    if (!GetMonitorInfo(m, ref info)) return true;
+                    int gap = info.Monitor.Bottom - info.Work.Bottom;
+                    if (gap <= 0 || gap > 200) return true;   // already full height, or not a taskbar-sized strip
+                    _savedWork.TryAdd((info.Work.Left, info.Monitor.Top), info.Work);
+                    var full = new RECT { Left = info.Work.Left, Top = info.Work.Top, Right = info.Work.Right, Bottom = info.Monitor.Bottom };
+                    SystemParametersInfo(SPI_SETWORKAREA, 0, ref full, SPIF_SENDCHANGE);
+                    return true;
+                }, IntPtr.Zero);
+            }
+            catch { }
+        }
+
+        private static void GiveWorkAreaBack()
+        {
+            try
+            {
+                foreach (var saved in _savedWork.Values.ToArray())
+                {
+                    var r = saved;
+                    SystemParametersInfo(SPI_SETWORKAREA, 0, ref r, SPIF_SENDCHANGE);
+                }
+                _savedWork.Clear();
+            }
+            catch { }
         }
 
         /// <summary>Hides the taskbar windows again if Windows brought them back (it does that now and then).</summary>
@@ -91,6 +148,7 @@ namespace CyberOptix.Services
             _hidden = false;
             try
             {
+                GiveWorkAreaBack();
                 foreach (var h in AllTaskbars()) ShowWindow(h, 5 /* SW_SHOW */);
                 var data = new APPBARDATA { cbSize = Marshal.SizeOf<APPBARDATA>(), hWnd = MainTaskbar, lParam = (IntPtr)_originalState };
                 SHAppBarMessage(ABM_SETSTATE, ref data);

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -452,6 +452,7 @@ namespace CyberOptix.Widgets
             if (Handle == IntPtr.Zero) return;
 
             var now = DateTime.UtcNow;
+            if (!IsSecondary && s.DockReplaceTaskbar) TaskbarTakeoverService.KeepWorkArea();
             IntPtr startWindow = IntPtr.Zero;
             bool startOpen = !IsSecondary && StartMenuService.IsOpen(out startWindow);
 
