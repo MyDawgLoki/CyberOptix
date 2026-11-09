@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Reflection;
 
@@ -17,6 +17,18 @@ namespace CyberOptix.Services
                 var path = AppPaths.Secure("wallpaper-video.log");
                 if (File.Exists(path) && new FileInfo(path).Length > 20_000) File.Delete(path);
                 File.AppendAllText(path, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "  " + message + Environment.NewLine);
+            }
+            catch { }
+        }
+
+        /// <summary>Adds a line to a small named log in the data folder (kept under 20 KB).</summary>
+        public static void LogTo(string file, string message)
+        {
+            try
+            {
+                var path = AppPaths.Secure(file);
+                if (File.Exists(path) && new FileInfo(path).Length > 20_000) File.Delete(path);
+                File.AppendAllText(path, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff") + "  " + message + Environment.NewLine);
             }
             catch { }
         }

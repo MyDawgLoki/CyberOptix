@@ -1,4 +1,4 @@
-<UserControl x:Class="CyberOptix.Pages.SettingsPage"
+﻿<UserControl x:Class="CyberOptix.Pages.SettingsPage"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:ctl="clr-namespace:CyberOptix.Controls">
@@ -155,9 +155,14 @@
             <TextBlock Text="Windows colors" Style="{StaticResource GroupTitle}"/>
             <Border Style="{StaticResource Card}">
                 <StackPanel>
-                    <CheckBox x:Name="chkWindowsAccent" Content="Use the CyberOptix color for Windows" Tag="Sets Windows' own accent color to the accent color above, so the Start menu, Search, the taskbar, window title bars and borders (File Explorer and Windows Settings too) are tinted with it. Windows can only color those parts; it does not let any program paint the inside of its apps a custom color. Your own Windows colors are saved first and put back when you switch this off, or with Restore." Click="WindowsAccentChanged"/>
+                    <CheckBox x:Name="chkWindowsAccent" Content="Change the Windows colors" Tag="Sets Windows' own accent color to the CyberOptix accent color above (or one you pick below), so the Start menu, Search, the taskbar, window title bars and borders (File Explorer and Windows Settings too) are tinted with it. Windows can only color those parts; it does not let any program paint the inside of its apps a custom color. Your own Windows colors are saved first and put back when you switch this off, or with Restore." Click="WindowsAccentChanged"/>
                     <Border Style="{StaticResource Divider}"/>
                     <CheckBox x:Name="chkWinMatchMedia" Content="Match the Media Player Color" Tag="While music or a video is playing, Windows' accent color takes the main color of its album cover or thumbnail, and goes back to the accent color above when it stops. Windows is told about the new color for each new track." Click="WindowsAccentChanged"/>
+                    <Border Style="{StaticResource Divider}"/>
+                    <CheckBox x:Name="chkWinOwnColor" Content="Pick the Windows color myself" Tag="Windows uses the color you choose below instead of the CyberOptix accent color. Off, it follows the accent color." Click="WindowsAccentChanged"/>
+                    <StackPanel x:Name="panelWinColor" Margin="16,0,16,14">
+                        <ctl:ColorWheel x:Name="wheelWin" DefaultHex="#14B8D4"/>
+                    </StackPanel>
                     <Border Style="{StaticResource Divider}"/>
                     <ctl:SettingRow Title="Choose your mode" Description="The colors that appear in Windows and your apps.">
                         <ComboBox x:Name="cmbWinMode" SelectionChanged="WindowsAccentChanged">

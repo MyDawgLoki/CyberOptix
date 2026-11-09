@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -72,6 +72,17 @@ namespace CyberOptix.Services
             return gap >= 3 && gap <= MaxGap ? gap : 0;   // already at the bottom, below it, or too far to be the taskbar's room
         }
 
+        private static string _lastNote = "";
+        private static int _notes;
+
+        /// <summary>Writes what the clamp measured to a small log (a line only when it changes, at most 300 lines a run), so a menu that stays up can be diagnosed. Holds no personal information.</summary>
+        private static void Note(string line)
+        {
+            if (line == _lastNote || _notes >= 300) return;
+            _lastNote = line; _notes++;
+            BackgroundVideo.LogTo("start-menu.log", line);
+        }
+
         private static IntPtr _settledWindow;
         private static RECT _settled;
 
@@ -117,12 +128,16 @@ namespace CyberOptix.Services
                 if (!GetMonitorInfo(MonitorFromWindow(window, 2 /* the nearest screen */), ref info)) return false;
                 // Windows draws the panel inside a larger see-through window, so the window's edge can already be at the
                 // bottom of the screen while the panel is still held up by the taskbar's room. Measure the panel itself.
-                int bottom = VisiblePanelBottom(window, r) ?? r.Bottom;
+                int? measured = VisiblePanelBottom(window, r);
+                int bottom = measured ?? r.Bottom;
                 int gap = GapToClose(bottom, info.Monitor.Bottom);
+                Note($"{(LastWasSearch ? "search" : "start")} window={r.Left},{r.Top},{r.Right},{r.Bottom} panelBottom={(measured?.ToString() ?? "unreadable")} screenBottom={info.Monitor.Bottom} gap={gap}");
                 if (gap == 0) { _settledWindow = window; _settled = r; return false; }
                 _settledWindow = IntPtr.Zero;
                 // keep its size and its place in the stack and do not take focus: only the position changes
-                return SetWindowPos(window, IntPtr.Zero, r.Left, r.Top + gap, 0, 0, 0x0001 | 0x0004 | 0x0010);
+                bool moved = SetWindowPos(window, IntPtr.Zero, r.Left, r.Top + gap, 0, 0, 0x0001 | 0x0004 | 0x0010);
+                Note($"moved by {gap}: {moved}");
+                return moved;
             }
             catch { return false; }
         }

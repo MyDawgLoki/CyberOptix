@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
@@ -63,6 +63,8 @@ namespace CyberOptix.Models
         public bool WinSystemDark { get; set; } = true;           // "default Windows mode": Start, the taskbar and the system's own parts
         public bool WinAppsDark { get; set; } = true;              // "default app mode": File Explorer, Settings and other apps
         public bool WinTransparency { get; set; } = true;          // transparency effects
+        public bool WinOwnColor { get; set; }                      // true: Windows gets its own color (below) instead of following the CyberOptix accent color
+        public string WinColorHex { get; set; } = "#14B8D4";       // that color
         public bool WinAccentOnStart { get; set; } = true;         // show the accent color on Start and the taskbar
         public bool WinAccentOnTitle { get; set; } = true;         // show it on title bars and window borders
 

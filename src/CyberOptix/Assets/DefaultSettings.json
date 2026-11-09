@@ -1,4 +1,4 @@
-{
+﻿{
   "DockEnabled": true,
   "DockPosition": "Top",
   "DockIconSize": 18,
@@ -28,6 +28,8 @@
   "WinSystemDark": true,
   "WinAppsDark": true,
   "WinTransparency": true,
+  "WinOwnColor": false,
+  "WinColorHex": "#14B8D4",
   "WinAccentOnStart": true,
   "WinAccentOnTitle": true,
   "DockFloatOverWindows": true,

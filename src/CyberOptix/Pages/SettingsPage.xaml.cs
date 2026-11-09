@@ -31,6 +31,7 @@ namespace CyberOptix.Pages
             // The driver row shows only while PawnIO is installed, which can change while the app runs (installed from the Monitor page).
             IsVisibleChanged += (_, _) => { if (IsVisible) rowPawnIo.Visibility = PawnIoService.IsInstalled() ? Visibility.Visible : Visibility.Collapsed; };
             wheelAccent.ColorCommitted += hex => { if (_loading) return; AppSettings.Current.AccentHex = hex.ToUpperInvariant(); Commit(); };
+            wheelWin.ColorCommitted += hex => { if (_loading) return; AppSettings.Current.WinColorHex = hex.ToUpperInvariant(); AppSettings.Save(); WindowsAccentService.Refresh(); };
             wheelWindowGlow.ColorCommitted += hex => { if (!_loading) SetWindowGlow(hex); };
         }
 
@@ -77,6 +78,8 @@ namespace CyberOptix.Pages
             chkKeepWindows.IsChecked = s.KeepWindowsSettingsOnRelaunch;
             chkWindowsAccent.IsChecked = s.SyncWindowsAccent;
             chkWinMatchMedia.IsChecked = s.WinMatchMedia;
+            chkWinOwnColor.IsChecked = s.WinOwnColor;
+            wheelWin.Hex = s.WinColorHex;
             cmbWinMode.SelectedIndex = s.WinSystemDark && s.WinAppsDark ? 1 : !s.WinSystemDark && !s.WinAppsDark ? 0 : 2;
             cmbWinSystem.SelectedIndex = s.WinSystemDark ? 1 : 0;
             cmbWinApp.SelectedIndex = s.WinAppsDark ? 1 : 0;
@@ -379,7 +382,8 @@ namespace CyberOptix.Pages
             bool custom = cmbWinMode.SelectedIndex == 2;
             rowWinSystem.Visibility = rowWinApp.Visibility = custom ? Visibility.Visible : Visibility.Collapsed;
             bool on = chkWindowsAccent.IsChecked == true;
-            foreach (UIElement el in new UIElement[] { chkWinMatchMedia, cmbWinMode, rowWinSystem, rowWinApp, chkWinTransparency, chkWinAccentStart, chkWinAccentTitle })
+            panelWinColor.Visibility = chkWinOwnColor.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
+            foreach (UIElement el in new UIElement[] { chkWinMatchMedia, chkWinOwnColor, panelWinColor, cmbWinMode, rowWinSystem, rowWinApp, chkWinTransparency, chkWinAccentStart, chkWinAccentTitle })
                 el.IsEnabled = on;
         }
 
@@ -400,6 +404,7 @@ namespace CyberOptix.Pages
 
             s.SyncWindowsAccent = chkWindowsAccent.IsChecked == true;
             s.WinMatchMedia = chkWinMatchMedia.IsChecked == true;
+            s.WinOwnColor = chkWinOwnColor.IsChecked == true;
             s.WinSystemDark = cmbWinSystem.SelectedIndex == 1;
             s.WinAppsDark = cmbWinApp.SelectedIndex == 1;
             s.WinTransparency = chkWinTransparency.IsChecked == true;

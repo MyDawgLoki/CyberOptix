@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -173,9 +173,9 @@ namespace CyberOptix.Services
             catch { }
         }
 
-        /// <summary>The color to use now: the album cover's while matching the media player and something plays, otherwise the CyberOptix accent.</summary>
+        /// <summary>The color to use now: the album cover's while matching the media player and something plays, otherwise the color picked for Windows, or the CyberOptix accent.</summary>
         private static string CurrentHex() =>
-            MediaColorService.ForWindows is Color m ? $"#{m.R:X2}{m.G:X2}{m.B:X2}" : AppSettings.Current.AccentHex;
+            MediaColorService.ForWindows is Color m ? $"#{m.R:X2}{m.G:X2}{m.B:X2}" : AppSettings.Current.WinOwnColor ? AppSettings.Current.WinColorHex : AppSettings.Current.AccentHex;
 
         /// <summary>Applies the current color when the match is on (and does nothing when it is already applied).</summary>
         public static void Refresh()

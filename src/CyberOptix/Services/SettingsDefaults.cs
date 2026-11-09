@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -93,7 +93,7 @@ namespace CyberOptix.Services
         {
             "AccentHex", "TintHex", "GlassTint", "WindowOpacity", "Backdrop", "FontHex", "MatchMediaAccent", "MatchMediaWindow", "MatchMediaText", "MatchMediaColor", "MatchMediaGlow", "CardHex",
             "CardOpacity", "BackgroundImage", "BackgroundVideo", "BackgroundImagePath", "BackgroundImageOpacity", "WindowGlow", "WindowGlowColor", "StartWithWindows", "StartQuietly",
-            "CloseToTray", "MinimizeTo", "SyncWindowsAccent", "WinMatchMedia", "WinSystemDark", "WinAppsDark", "WinTransparency", "WinAccentOnStart", "WinAccentOnTitle",
+            "CloseToTray", "MinimizeTo", "SyncWindowsAccent", "WinMatchMedia", "WinSystemDark", "WinAppsDark", "WinTransparency", "WinOwnColor", "WinColorHex", "WinAccentOnStart", "WinAccentOnTitle",
         };
     }
 }
