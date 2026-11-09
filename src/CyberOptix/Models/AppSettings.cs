@@ -116,7 +116,7 @@ namespace CyberOptix.Models
         public bool DesktopClockWeather { get; set; } = true;        // a weather icon on the clock's left; click it for the forecast widget
         public double DesktopClockScale { get; set; } = 1.0;          // 0.5 - 2.5 times the theme's size
         public double DesktopClockOpacity { get; set; } = 0.95;
-        public string DesktopClockColorMode { get; set; } = "Text";   // Text (the app's text color), Accent, Media (album cover), Custom
+        public string DesktopClockColorMode { get; set; } = "Media";   // Media (album cover, sync with the media player), Custom (the picked color); older saves may say Text or Accent
         public string DesktopClockColor { get; set; } = "#FFFFFF";    // used when the color mode is Custom
         public bool DesktopClockGlow { get; set; } = true;            // a soft shadow/glow so it reads on any wallpaper
         public string DesktopClockAnchor { get; set; } = "TopCenter"; // TopLeft, TopCenter, TopRight, MiddleLeft, Center, MiddleRight, BottomLeft, BottomCenter, BottomRight

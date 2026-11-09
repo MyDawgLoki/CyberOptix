@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
@@ -220,7 +220,7 @@ namespace CyberOptix.Widgets
                     break;
                 case "Media":
                     c = MediaColorService.Current;
-                    if (c == null && Application.Current?.TryFindResource("AccentBrush") is SolidColorBrush a2) c = a2.Color;
+                    if (c == null && ThemeService.TryParse(s.DesktopClockColor, out var own)) c = own;   // nothing playing: the color picked on the wheel
                     break;
                 case "Custom":
                     if (ThemeService.TryParse(s.DesktopClockColor, out var custom)) c = custom;

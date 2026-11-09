@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -39,7 +39,7 @@ namespace CyberOptix.Services
         public static void Sync()
         {
             var s = AppSettings.Current;
-            bool want = s.MatchMediaColor || s.MatchMediaGlow || s.DockMatchMedia || s.MatchMediaAccent || s.MatchMediaWindow || s.MatchMediaText || s.MediaWidgetAutoShow || (s.SyncWindowsAccent && s.WinMatchMedia);
+            bool want = s.MatchMediaColor || s.MatchMediaGlow || s.DockMatchMedia || s.MatchMediaAccent || s.MatchMediaWindow || s.MatchMediaText || s.MediaWidgetAutoShow || s.DesktopClockColorMode == "Media" || (s.SyncWindowsAccent && s.WinMatchMedia);
             if (want && !_running)
             {
                 _running = true;

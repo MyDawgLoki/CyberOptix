@@ -1,4 +1,4 @@
-<UserControl x:Class="CyberOptix.Pages.DesktopClockPage"
+﻿<UserControl x:Class="CyberOptix.Pages.DesktopClockPage"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:ctl="clr-namespace:CyberOptix.Controls"
@@ -45,17 +45,13 @@
                     <Border Style="{StaticResource Divider}"/>
                     <CheckBox x:Name="chkGlow" Content="Soft shadow / glow" Tag="Keeps the clock readable on any wallpaper. The Neon theme glows in its own color." Click="Changed"/>
                     <Border Style="{StaticResource Divider}"/>
-                    <ctl:SettingRow Title="Color" Description="Text color follows the app. Media cover takes the color of what is playing (your accent color until something plays).">
-                        <ComboBox x:Name="cmbColor" Width="200" SelectionChanged="SelectionChanged">
-                            <ComboBoxItem Content="App text color" Tag="Text"/>
-                            <ComboBoxItem Content="Accent color" Tag="Accent"/>
-                            <ComboBoxItem Content="Media cover color" Tag="Media"/>
-                            <ComboBoxItem Content="Custom" Tag="Custom"/>
-                        </ComboBox>
-                    </ctl:SettingRow>
-                    <StackPanel x:Name="panelCustom" Margin="4,6,0,6">
+                    <CheckBox x:Name="chkSyncMedia" Content="Sync with the media player" Tag="While music or a video is playing, the clock takes the main color of its album cover or thumbnail, whatever theme it uses. When nothing is playing, or with this off, it uses the color you pick below." Click="Changed"/>
+                    <StackPanel Margin="16,6,16,14">
+                        <TextBlock Text="Clock color" Foreground="{DynamicResource TextBrush}"/>
+                        <TextBlock Style="{StaticResource Note}" Margin="0,2,0,10" Text="Works with every clock theme. You can also type a hex color."/>
                         <ctl:ColorWheel x:Name="wheelClock" DefaultHex="#FFFFFF"/>
                     </StackPanel>
+                </StackPanel>
                 </StackPanel>
             </Border>
 

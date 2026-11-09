@@ -35,8 +35,7 @@ namespace CyberOptix.Pages
             sldScale.Value = Math.Clamp(s.DesktopClockScale, sldScale.Minimum, sldScale.Maximum);
             sldOpacity.Value = Math.Clamp(s.DesktopClockOpacity, sldOpacity.Minimum, sldOpacity.Maximum);
 
-            foreach (ComboBoxItem item in cmbColor.Items) if ((string)item.Tag == s.DesktopClockColorMode) cmbColor.SelectedItem = item;
-            if (cmbColor.SelectedItem == null) cmbColor.SelectedIndex = 0;
+            chkSyncMedia.IsChecked = s.DesktopClockColorMode == "Media";
             wheelClock.Hex = s.DesktopClockColor;
 
             BuildAnchors();
@@ -178,6 +177,7 @@ namespace CyberOptix.Pages
         private void SetColor(string hex)
         {
             AppSettings.Current.DesktopClockColor = hex.ToUpperInvariant();
+            if (AppSettings.Current.DesktopClockColorMode != "Media") AppSettings.Current.DesktopClockColorMode = "Custom";   // picking a color means using it
             Commit();
         }
 
@@ -187,7 +187,6 @@ namespace CyberOptix.Pages
             panelAll.IsEnabled = s.DesktopClock;
             panelAll.Opacity = s.DesktopClock ? 1 : 0.5;
             chkAmPm.IsEnabled = !s.DesktopClock24h;
-            panelCustom.Visibility = s.DesktopClockColorMode == "Custom" ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void Commit()
@@ -210,7 +209,7 @@ namespace CyberOptix.Pages
             s.DesktopClockGlow = chkGlow.IsChecked == true;
             s.DesktopClockScale = Math.Round(sldScale.Value, 2);
             s.DesktopClockOpacity = Math.Round(sldOpacity.Value, 2);
-            if (cmbColor.SelectedItem is ComboBoxItem c) s.DesktopClockColorMode = (string)c.Tag;
+            s.DesktopClockColorMode = chkSyncMedia.IsChecked == true ? "Media" : s.DesktopClockColorMode == "Media" ? "Custom" : s.DesktopClockColorMode;
             if (cmbAnchor.SelectedItem is ComboBoxItem a && (string)a.Tag != "Custom")
             {
                 s.DesktopClockAnchor = (string)a.Tag;
@@ -224,6 +223,7 @@ namespace CyberOptix.Pages
             if (_loading) return;
             ReadAll();
             Commit();
+            if (ReferenceEquals(sender, chkSyncMedia)) MediaColorService.Sync();   // starts or stops following the media player
             if (sender == chk24) BuildThemes();
             if (sender == cmbAnchor) Dispatcher.BeginInvoke(new Action(() => { _loading = true; BuildAnchors(); _loading = false; }));   // the "Custom spot" entry goes once a place is chosen
         }
