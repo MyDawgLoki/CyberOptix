@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -17,8 +17,8 @@ namespace CyberOptix.Controls
         /// <summary>How long the end of the video dissolves into its start.</summary>
         public static readonly TimeSpan Blend = TimeSpan.FromSeconds(1.2);
 
-        private readonly MediaElement _a = NewPlayer();
-        private readonly MediaElement _b = NewPlayer();
+        private MediaElement _a = NewPlayer();
+        private MediaElement _b = NewPlayer();
         private readonly DispatcherTimer _watch = new() { Interval = TimeSpan.FromMilliseconds(40) };
         private MediaElement _front;
         private MediaElement _back;
@@ -36,22 +36,53 @@ namespace CyberOptix.Controls
             ClipToBounds = true;
             _front = _a;
             _back = _b;
+            Hook(_a); Hook(_b);
             Children.Add(_a);
             Children.Add(_b);
             _a.Opacity = 1;
             _b.Opacity = 0;
-            _a.MediaOpened += (_, _) => { _failures = 0; ReadLength(_a); };
-            _b.MediaOpened += (_, _) => { _failures = 0; ReadLength(_b); };
-            _a.MediaFailed += (_, e) => OnFailed(e);
-            _b.MediaFailed += (_, e) => OnFailed(e);
             _watch.Tick += (_, _) => Watch();
-            // a video that reached its end without the blend (or a player that stopped for any reason) starts over instead of freezing on its last picture
-            _a.MediaEnded += (_, _) => Ended(_a);
-            _b.MediaEnded += (_, _) => Ended(_b);
             // the picture can stop after the PC wakes, is unlocked, or a display changes: start the video again then
             Microsoft.Win32.SystemEvents.PowerModeChanged += (_, e) => { if (e.Mode == Microsoft.Win32.PowerModes.Resume) Dispatcher.BeginInvoke(new Action(() => RecoverSoon())); };
             Microsoft.Win32.SystemEvents.SessionSwitch += (_, e) => { if (e.Reason is Microsoft.Win32.SessionSwitchReason.SessionUnlock or Microsoft.Win32.SessionSwitchReason.SessionLogon or Microsoft.Win32.SessionSwitchReason.ConsoleConnect or Microsoft.Win32.SessionSwitchReason.RemoteConnect) Dispatcher.BeginInvoke(new Action(() => RecoverSoon())); };
             Microsoft.Win32.SystemEvents.DisplaySettingsChanged += (_, _) => Dispatcher.BeginInvoke(new Action(() => RecoverSoon()));
+        }
+
+        private Uri? _uri;
+
+        /// <summary>Wires a player's events. Events from a player that has since been replaced are ignored.</summary>
+        private void Hook(MediaElement player)
+        {
+            bool Current() => player == _a || player == _b;
+            player.MediaOpened += (_, _) =>
+            {
+                if (!Current()) return;
+                _failures = 0; ReadLength(player);
+                if (player == _a && _uri != null && _b.Source == null)   // the second player opens only once the first is running
+                {
+                    _b.Source = _uri;
+                    _b.Play(); _b.Pause();
+                }
+            };
+            player.MediaFailed += (_, e) => { if (Current()) OnFailed(e); };
+            // a video that reached its end without the blend (or a player that stopped for any reason) starts over instead of freezing on its last picture
+            player.MediaEnded += (_, _) => { if (Current()) Ended(player); };
+        }
+
+        /// <summary>Throws the two players away and makes new ones. A player that failed once (the Windows media pipeline gives "unexpected failure") stays broken, so a retry needs fresh ones.</summary>
+        private void NewPlayers()
+        {
+            foreach (var old in new[] { _a, _b })
+            {
+                old.BeginAnimation(OpacityProperty, null);
+                try { old.Stop(); old.Close(); } catch { }
+                old.Source = null;
+                Children.Remove(old);
+            }
+            _a = NewPlayer(); _b = NewPlayer();
+            Hook(_a); Hook(_b);
+            Children.Add(_a); Children.Add(_b);
+            _front = _a; _back = _b;
         }
 
         private DateTime _lastMove = DateTime.UtcNow;
@@ -105,19 +136,16 @@ namespace CyberOptix.Controls
             _path = path;
             _length = TimeSpan.Zero;
             _blending = false;
-            _a.BeginAnimation(OpacityProperty, null); _b.BeginAnimation(OpacityProperty, null);   // a fade left over from before must not touch the new start
-            _front = _a; _back = _b;
+            NewPlayers();   // fresh players every time (this also drops a fade left over from before)
             _graceUntil = DateTime.UtcNow.AddSeconds(5);
             _lastMove = DateTime.UtcNow;
             _lastPosition = TimeSpan.Zero;
             _a.Opacity = 1; _b.Opacity = 0;
             SetZIndex(_a, 0); SetZIndex(_b, 1);
-            var uri = new Uri(path);
-            _a.Source = uri;
-            _b.Source = uri;
-            // Both are opened and parked on the first picture, so the second is ready the moment it is needed.
-            _a.Play(); _a.Pause(); _b.Play(); _b.Pause();
-            if (_active) _a.Play();
+            _uri = new Uri(path);
+            _a.Source = _uri;   // the second player is opened when this one has (see Hook), parked on the first picture, ready for the blend
+            _a.Play();
+            if (!_active) _a.Pause();
         }
 
         /// <summary>Plays while true, and holds still (using no CPU or GPU) while false, for example when the window is minimized.</summary>
