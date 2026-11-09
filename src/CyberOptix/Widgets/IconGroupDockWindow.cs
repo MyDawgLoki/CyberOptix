@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -38,6 +38,9 @@ namespace CyberOptix.Widgets
         private readonly Border _glow;
         private readonly StackPanel _icons = new();
         private readonly DispatcherTimer _timer = new() { Interval = TimeSpan.FromSeconds(1) };
+        private readonly DispatcherTimer _layerTimer = new() { Interval = TimeSpan.FromMilliseconds(50) };
+        private readonly DockLayerController _layerCtl = new();
+        private string _appliedLayer = "";
         private string _signature = "";
         private string _glowSignature = "";
         private string _position = "Top";
@@ -83,12 +86,11 @@ namespace CyberOptix.Widgets
             SizeChanged += (_, _) => IconGroupDockService.PlaceAll();
             DpiChanged += (_, _) => IconGroupDockService.PlaceAll();
             Microsoft.Win32.SystemEvents.DisplaySettingsChanged += DisplaysChanged;
-            Closed += (_, _) => { _timer.Stop(); Microsoft.Win32.SystemEvents.DisplaySettingsChanged -= DisplaysChanged; };
-            // With the main dock set to fall behind windows, an icon dock does the same, and comes forward while the pointer is over it.
-            MouseEnter += (_, _) => { if (AppSettings.Current.DockLayer != "Top") Topmost = true; };
-            MouseLeave += (_, _) => { if (AppSettings.Current.DockLayer != "Top") { Topmost = false; SendBack(); } };
+            Closed += (_, _) => { _timer.Stop(); _layerTimer.Stop(); Microsoft.Win32.SystemEvents.DisplaySettingsChanged -= DisplaysChanged; };
+            // Each dock has its own layer, like the main dock: in front, falling behind windows (comes forward on hover), or sticking behind them.
+            _layerTimer.Tick += (_, _) => LayerTick();
             _timer.Tick += (_, _) => Tick();
-            Loaded += (_, _) => { _timer.Start(); Tick(); };
+            Loaded += (_, _) => { _timer.Start(); _layerTimer.Start(); Tick(); LayerTick(); };
             Refresh();
         }
 
@@ -117,7 +119,6 @@ namespace CyberOptix.Widgets
                 _signature = sig;
                 Build(groups, glyph);
             }
-            ApplyLayer();
             ApplyGlow();
         }
 
@@ -154,19 +155,53 @@ namespace CyberOptix.Widgets
             }
         }
 
-        private void ApplyLayer()
-        {
-            bool top = AppSettings.Current.DockLayer == "Top";
-            if (top) { if (!Topmost) Topmost = true; }
-            else if (!IsMouseOver) { if (Topmost) Topmost = false; SendBack(); }
-        }
+        /// <summary>This dock's layer: "Top" (always in front), "Fall" (behind windows, comes forward on hover; the default) or "Stick" (behind windows, comes forward with the Start menu).</summary>
+        public static string LayerFor(string group) =>
+            AppSettings.Current.IndividualDockLayers.TryGetValue(group, out var v) && v is "Top" or "Stick" ? v : "Fall";
 
+        private void Raise() => SetWindowPos(new WindowInteropHelper(this).Handle, new IntPtr(-1), 0, 0, 0, 0, 0x0001 | 0x0002 | 0x0010);   // topmost; no move, no resize, no focus
         private void SendBack()
         {
             var h = new WindowInteropHelper(this).Handle;
             if (h != IntPtr.Zero) SetWindowPos(h, (IntPtr)1, 0, 0, 0, 0, 0x13);   // HWND_BOTTOM, NOSIZE | NOMOVE | NOACTIVATE
         }
 
+        /// <summary>Runs about twenty times a second: brings the dock forward when the pointer rests on it (or the screen edge it sits on) or the Start menu opens, and sends it back after.</summary>
+        private void LayerTick()
+        {
+            var h = new WindowInteropHelper(this).Handle;
+            if (h == IntPtr.Zero) return;
+            string layer = LayerFor(Group);
+            if (layer != _appliedLayer)
+            {
+                _appliedLayer = layer;
+                _layerCtl.Reset();
+                Topmost = layer == "Top";
+                if (layer == "Top") Raise(); else SendBack();
+            }
+            if (layer == "Top" || Visibility != Visibility.Visible) return;
+
+            bool startOpen = StartMenuService.IsOpen(out _);
+            bool over = layer == "Fall" && PointerOverThisDock(h, _layerCtl.InFront);
+            switch (_layerCtl.Update(layer, startOpen, over, ScreenProbe.ButtonDown(), false, DateTime.UtcNow))
+            {
+                case DockLayerController.Move.Raise: Raise(); break;
+                case DockLayerController.Move.Lower: SendBack(); break;
+            }
+        }
+
+        private bool PointerOverThisDock(IntPtr h, bool alreadyOut)
+        {
+            if (!ScreenProbe.Pointer(out var px, out var py)) return false;
+            if (!ScreenProbe.WindowRect(h, out var l, out var t, out var r, out var b)) return false;
+            if (!ScreenProbe.MonitorRect(h, out _, out var screenTop, out _, out var screenBottom)) return false;
+            double dpi = VisualTreeHelper.GetDpi(this).DpiScaleX;
+            int room = (int)Math.Round(Room * dpi), pad = alreadyOut ? (int)Math.Round(14 * dpi) : 0;
+            bool top = _position.StartsWith("Top") || (_position.StartsWith("Beside") && AppSettings.Current.DockPosition == "Top");
+            bool bottom = _position.StartsWith("Bottom") || (_position.StartsWith("Beside") && AppSettings.Current.DockPosition != "Top");
+            if (top || bottom) return DockLayerController.PointerOverDock(px, py, l, t, r, b, room, pad, top, screenTop, screenBottom);   // the dock plus the screen edge behind it
+            return px >= l + room - pad && px <= r - room + pad && py >= t + room - pad && py <= b - room + pad;                           // a dock on the left or right edge: just the dock
+        }
         private void ApplyGlow()
         {
             var s = AppSettings.Current;
@@ -198,7 +233,7 @@ namespace CyberOptix.Widgets
             if (s.DockHideFullscreen)
             {
                 DesktopHost.Query(new WindowInteropHelper(this).Handle, out var covers, out var maximized);
-                bool hide = covers && !(s.DockLayer != "Top" && maximized);
+                bool hide = covers && !(LayerFor(Group) != "Top" && maximized);
                 var want = hide ? Visibility.Hidden : Visibility.Visible;
                 if (Visibility != want) Visibility = want;
             }

@@ -86,7 +86,7 @@ namespace CyberOptix.Services
         {
             "DockEnabled", "DockPosition", "DockIconSize", "DockShowRunning", "DockShowRecycleBin", "DockHideFullscreen", "DockShowSystem", "DockWidgetAuto", "DockWidgetSize",
             "DockClockAuto", "DockClockSize", "DockExtraIcons", "DockGlow", "DockGlowColor", "DockMatchMedia", "DockShowBadges", "DockShowFlashing", "DockAllDisplays", "DockAppsOn", "DockLayer",
-            "DockSearchAtBottom", "DockStartAtBottom", "DockFloatOverWindows", "DockReplaceTaskbar", "IndividualDocks", "IconGroups", "DockPlaceOrder", "IconOrder",
+            "DockSearchAtBottom", "DockStartAtBottom", "DockFloatOverWindows", "DockReplaceTaskbar", "IndividualDocks", "IndividualDockLayers", "IconGroups", "DockPlaceOrder", "IconOrder",
         };
         public static readonly string[] WindowManager = { nameof(AppSettings.HotkeysEnabled), nameof(AppSettings.Gap) };
         public static readonly string[] AppSettingsPage =

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -390,7 +390,27 @@ namespace CyberOptix.Pages
             side.Children.Add(toggle);
             Grid.SetColumn(side, 1);
             grid.Children.Add(side);
-            return grid;
+
+            // how this dock sits among the windows, the same three choices as the main dock
+            var layerRow = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right, Margin = new Thickness(0, 6, 0, 0) };
+            layerRow.Children.Add(new TextBlock { Text = "Dock and windows", VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(0, 0, 10, 0), Foreground = (Brush)FindResource("TextDimBrush") });
+            var layer = new ComboBox { Width = 210, ToolTip = "Stay on top keeps this dock in front. Fall behind (the default) lets windows cover it: move the pointer onto it (or the screen edge it sits on) to bring it forward. Stick behind covers it the same way, but only the Start menu brings it forward." };
+            string[] layerKeys = { "Top", "Fall", "Stick" };
+            foreach (var name in new[] { "Stay On Top Of Windows", "Fall Behind Windows (Default)", "Stick Behind Windows" }) layer.Items.Add(new ComboBoxItem { Content = name });
+            layer.SelectedIndex = Array.IndexOf(layerKeys, IconGroupDockWindow.LayerFor(group));
+            layer.SelectionChanged += (_, _) =>
+            {
+                if (_loading || layer.SelectedIndex < 0) return;
+                AppSettings.Current.IndividualDockLayers[group] = layerKeys[layer.SelectedIndex];
+                AppSettings.Save();   // the dock reads it on its own, within a moment
+            };
+            layerRow.Children.Add(layer);
+            layerRow.Visibility = s.IndividualDocks.ContainsKey(group) ? Visibility.Visible : Visibility.Collapsed;
+            toggle.Click += (_, _) => layerRow.Visibility = toggle.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
+            var both = new StackPanel { Margin = new Thickness(0, 0, 0, 0) };
+            both.Children.Add(grid);
+            both.Children.Add(layerRow);
+            return both;
         }
 
         private void ExtraChanged(object sender, RoutedEventArgs e)

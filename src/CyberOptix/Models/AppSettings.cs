@@ -129,6 +129,7 @@ namespace CyberOptix.Models
         /// the group's name, and the edge of the screen it sticks to (Top, Bottom, Left or Right). A group that is not listed stays in the main dock.
         /// </summary>
         public Dictionary<string, string> IndividualDocks { get; set; } = new();
+        public Dictionary<string, string> IndividualDockLayers { get; set; } = new();   // per dock: Top | Fall | Stick (a dock not listed falls behind windows, like the main dock's default)
 
         /// <summary>Icons the user dragged into a different group (and so a different dock) on the Dock page: the icon's id, then the group it now sits in.</summary>
         public Dictionary<string, string> IconGroups { get; set; } = new();
