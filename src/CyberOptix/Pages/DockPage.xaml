@@ -7,25 +7,27 @@
             <TextBlock Text="Dock" Style="{StaticResource PageTitle}"/>
             <TextBlock Text="A floating dock for your pinned and running apps. It sits above the desktop and does not replace the Windows taskbar." Style="{StaticResource PageSub}"/>
 
+            <Grid Margin="0,0,0,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Main Dock" Style="{StaticResource GroupTitle}" Margin="4,0,0,0" VerticalAlignment="Center"/>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <ComboBox x:Name="cmbPosition" SelectionChanged="Changed" Width="100" Margin="0,0,10,0" ToolTip="Which edge of the screen the main dock sits on.">
+                        <ComboBoxItem Content="Bottom"/>
+                        <ComboBoxItem Content="Top"/>
+                    </ComboBox>
+                    <ComboBox x:Name="cmbLayer" SelectionChanged="Changed" Width="215" Margin="0,0,14,0" ToolTip="Stay on top keeps the dock in front, and when it replaces the taskbar it keeps maximized windows from going under it. Fall behind (the default) lets windows use the whole screen and cover the dock: move the pointer onto the dock (or the screen edge it sits on) to bring it forward. Stick behind covers it the same way, but the pointer does nothing: press the Windows key and the dock comes forward with the Start menu.">
+                        <ComboBoxItem Content="Stay On Top Of Windows"/>
+                        <ComboBoxItem Content="Fall Behind Windows (Default)"/>
+                        <ComboBoxItem Content="Stick Behind Windows"/>
+                    </ComboBox>
+                    <CheckBox x:Name="chkDock" Content="Show the dock" ToolTip="Appears on your main display, and on the others if you switch on all displays below. It closes when you close CyberOptix." Click="Changed"/>
+                </StackPanel>
+            </Grid>
             <Border Style="{StaticResource Card}">
                 <StackPanel>
-                    <CheckBox x:Name="chkDock" Content="Show the dock" Tag="Appears on your main display, and on the others if you switch on all displays below. It closes when you close CyberOptix." Click="Changed"/>
-                    <Border Style="{StaticResource Divider}"/>
-                    <ctl:SettingRow Title="Position">
-                        <ComboBox x:Name="cmbPosition" SelectionChanged="Changed">
-                            <ComboBoxItem Content="Bottom"/>
-                            <ComboBoxItem Content="Top"/>
-                        </ComboBox>
-                    </ctl:SettingRow>
-                    <Border Style="{StaticResource Divider}"/>
-                    <ctl:SettingRow Title="Dock and windows" Description="Stay on top keeps the dock in front, and when it replaces the taskbar it keeps maximized windows from going under it. Fall behind (the default) lets windows use the whole screen and cover the dock: move the pointer onto the dock (or the screen edge it sits on) to bring it forward. Stick behind covers it the same way, but the pointer does nothing: press the Windows key and the dock comes forward with the Start menu.">
-                        <ComboBox x:Name="cmbLayer" SelectionChanged="Changed" MinWidth="190">
-                            <ComboBoxItem Content="Stay On Top Of Windows"/>
-                            <ComboBoxItem Content="Fall Behind Windows (Default)"/>
-                            <ComboBoxItem Content="Stick Behind Windows"/>
-                        </ComboBox>
-                    </ctl:SettingRow>
-                    <Border Style="{StaticResource Divider}"/>
                     <CheckBox x:Name="chkStartBottom" Content="Put the Start menu flush with the bottom of the screen" Tag="Windows leaves room under the Start menu for a taskbar, even when the dock replaces it or sits behind windows. This moves the menu down so there is no gap under it. It applies when the dock replaces the taskbar, or is set to fall or stick behind windows." Checked="Changed" Unchecked="Changed"/>
                     <CheckBox x:Name="chkSearchBottom" Content="Put the Windows Search menu flush with the bottom of the screen" Tag="The same for the Windows Search menu (the one that opens from the search box or the Windows key + S). It applies when the dock replaces the taskbar, or is set to fall or stick behind windows." Checked="Changed" Unchecked="Changed"/>
                     <Border Style="{StaticResource Divider}"/>

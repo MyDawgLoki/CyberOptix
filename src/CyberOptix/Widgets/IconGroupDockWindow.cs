@@ -233,7 +233,7 @@ namespace CyberOptix.Widgets
             if (s.DockHideFullscreen)
             {
                 DesktopHost.Query(new WindowInteropHelper(this).Handle, out var covers, out var maximized);
-                bool hide = covers && !(LayerFor(Group) != "Top" && maximized);
+                bool hide = covers && LayerFor(Group) == "Top";   // behind the windows it is never hidden, or the pointer could not bring it back
                 var want = hide ? Visibility.Hidden : Visibility.Visible;
                 if (Visibility != want) Visibility = want;
             }

@@ -542,9 +542,9 @@ namespace CyberOptix.Widgets
             if (s.DockHideFullscreen)
             {
                 DesktopHost.Query(Handle, out var covers, out var maximized);
-                // With the dock behind the windows, a maximized window is meant to fill the screen (it covers the whole monitor, so it would
-                // look like a fullscreen game): only a real fullscreen window hides the dock then.
-                bool hide = covers && !(Layer != "Top" && maximized);
+                // With the dock behind the windows it is never hidden: it is already out of the way, and a hidden dock can neither be
+                // brought forward by the pointer nor by the Start menu (any window that fills the screen, maximized or not, used to hide it for good).
+                bool hide = covers && Layer == "Top";
                 var want = hide ? Visibility.Hidden : Visibility.Visible;
                 if (Visibility != want) Visibility = want;
                 if (hide) return;
