@@ -9,6 +9,44 @@ namespace CyberOptix
         private const string ShowEventName = @"Local\CyberOptix.ShowWindow";
         private static Mutex? _single;
 
+        /// <summary>
+        /// True when this is the only CyberOptix. Two copies would fight over the taskbar (hiding it, bringing it back, Windows complaining
+        /// that "a toolbar is already hidden"), so the lock is checked twice: by name, and by looking for another CyberOptix in this sign-in session.
+        /// A copy that is closing (a restart) gets a few seconds to let go before this one gives up.
+        /// </summary>
+        private static bool TakeSingleInstance()
+        {
+            bool owned = false;
+            try
+            {
+                _single = new Mutex(true, @"Local\CyberOptix.SingleInstance", out owned);
+                if (!owned)
+                {
+                    try { EventWaitHandle.OpenExisting(ShowEventName).Set(); } catch { }   // wakes the running one, in case it is in the tray
+                    try { owned = _single.WaitOne(TimeSpan.FromSeconds(4)); }
+                    catch (AbandonedMutexException) { owned = true; }   // the other copy died without letting go
+                }
+            }
+            catch (UnauthorizedAccessException) { owned = false; }   // the lock belongs to a copy we cannot open: it is running
+            catch { owned = true; }                                   // could not make the lock at all: the check below decides
+
+            if (!owned) return false;
+            try
+            {
+                // belt and braces: another CyberOptix.exe in this session that still holds on after the lock was ours is a real second copy
+                var me = System.Diagnostics.Process.GetCurrentProcess();
+                for (int wait = 0; wait < 8; wait++)
+                {
+                    bool other = System.Diagnostics.Process.GetProcessesByName(me.ProcessName)
+                        .Any(p => { try { return p.Id != me.Id && p.SessionId == me.SessionId && !p.HasExited; } catch { return false; } });
+                    if (!other) return true;
+                    Thread.Sleep(500);   // maybe a copy that is closing
+                }
+                return false;
+            }
+            catch { return true; }
+        }
+
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
@@ -33,8 +71,7 @@ namespace CyberOptix
             }
 
             // One CyberOptix at a time: a second launch just brings the first one (which may be in the tray) to the front.
-            _single = new Mutex(true, @"Local\CyberOptix.SingleInstance", out var first);
-            if (!first)
+            if (!TakeSingleInstance())
             {
                 try { EventWaitHandle.OpenExisting(ShowEventName).Set(); } catch { }
                 Shutdown(0);
