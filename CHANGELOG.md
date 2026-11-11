@@ -1,11 +1,11 @@
 # Changelog
 
+Every release lists what is new, what was fixed and what changed. The same text is in the release notes on GitHub.
+
 ## Unreleased
 
 **Fixed**
 - Two copies of CyberOptix could run at once (for example after a restart that began with the startup task, then opening it again), and they fought over the taskbar: it kept hiding and coming back, and Windows showed "A toolbar is already hidden on this side of your screen". The "one at a time" check now looks twice (the named lock, and any other CyberOptix in the same sign-in session) and gives a closing copy a few seconds to let go before a new one gives up. A second launch just brings the running one to the front.
-
-Every release lists what is new, what was fixed and what changed. The same text is in the release notes on GitHub.
 
 ## v1.0.3
 
