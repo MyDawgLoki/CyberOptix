@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -69,13 +69,9 @@ namespace CyberOptix.Services
         {
             if (!_hidden)
             {
-                var data = new APPBARDATA { cbSize = Marshal.SizeOf<APPBARDATA>(), hWnd = MainTaskbar };
-                _originalState = (int)(ulong)SHAppBarMessage(ABM_GETSTATE, ref data);
-                if ((_originalState & ABS_AUTOHIDE) == 0)
-                {
-                    data.lParam = (IntPtr)(_originalState | ABS_AUTOHIDE);
-                    SHAppBarMessage(ABM_SETSTATE, ref data); // auto-hide frees the screen space
-                }
+                // The taskbar's own auto-hide setting is left alone. Asking Windows to turn it on made Explorer answer "A toolbar is already
+                // hidden on this side of your screen" whenever another screen (a virtual or remote display, say) came or went, and the setting
+                // stayed switched on in the registry. The taskbar windows are hidden and their strip handed back instead.
                 _hidden = true;
                 AppDomain.CurrentDomain.ProcessExit += (_, _) => RestoreTaskbar();
                 AppDomain.CurrentDomain.UnhandledException += (_, _) => RestoreTaskbar();
@@ -150,8 +146,7 @@ namespace CyberOptix.Services
             {
                 GiveWorkAreaBack();
                 foreach (var h in AllTaskbars()) ShowWindow(h, 5 /* SW_SHOW */);
-                var data = new APPBARDATA { cbSize = Marshal.SizeOf<APPBARDATA>(), hWnd = MainTaskbar, lParam = (IntPtr)_originalState };
-                SHAppBarMessage(ABM_SETSTATE, ref data);
+
             }
             catch { }
         }
