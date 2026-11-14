@@ -5,9 +5,11 @@ Every release lists what is new, what was fixed and what changed. The same text 
 ## Unreleased
 
 **New**
+- A **crash handler**: an error nobody handled is written to `crash.log` (error and call stack, personal folders replaced by placeholders, kept under 30 KB, never sent anywhere). One error on the screen's thread is logged and CyberOptix carries on; a burst of errors, or a fatal one, puts the Windows taskbar back and restarts CyberOptix once (at most once every five minutes, so a start-up bug cannot loop).
 - A **Sleep** section on the Display page: when Windows turns the screens off and puts the PC to sleep, plugged in and (on a laptop) on battery, plus a "Turn the screens off now" button. They are Windows' own power-plan timers, the same ones as in Windows Settings.
 
 **Changed**
+- Applying an Optimizer profile starts one PowerShell for the restore point, the SysMain service and the network tweak, instead of one for each setting. Registry values and the power plan are written directly, so there are far fewer short CPU spikes.
 - A game or fullscreen app no longer hides the dock. With "Fall behind a game or fullscreen app" on (it was "Hide while a game or fullscreen app is open"), every dock drops behind the game, and the Windows key brings it forward with the Start menu. It goes back behind the game when the menu closes.
 
 **Fixed**

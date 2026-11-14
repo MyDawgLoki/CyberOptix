@@ -94,6 +94,7 @@ namespace CyberOptix
                 return;
             }
             var show = new EventWaitHandle(false, EventResetMode.AutoReset, ShowEventName);
+            Services.CrashHandler.Install(this);   // unhandled errors are logged to crash.log instead of silently ending the app
 
             var window = new MainWindow();
             // Started by Windows at sign-in: load everything (dock, widgets, Glass Cursor, hotkeys) but stay quietly in the tray.
