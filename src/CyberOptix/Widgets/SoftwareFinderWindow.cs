@@ -106,7 +106,7 @@ namespace CyberOptix.Widgets
                 _rows.Add((box, item, row));
                 // icons come in a few at a time, so the list appears at once and fills in
                 var path = item.Path;
-                Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => icon.Source = DockService.IconFor(path)));
+                _ = Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => icon.Source = DockService.IconFor(path)));
             }
         }
 

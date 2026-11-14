@@ -14,6 +14,9 @@ Every release lists what is new, what was fixed and what changed. The same text 
 - A game or fullscreen app no longer hides the dock. With "Fall behind a game or fullscreen app" on (it was "Hide while a game or fullscreen app is open"), every dock drops behind the game, and the Windows key brings it forward with the Start menu. It goes back behind the game when the menu closes.
 
 **Fixed**
+- Settings can no longer be lost to a power cut or a crash while they are being saved. They are written to a temporary file and swapped in, the previous copy is kept as `settings.json.bak`, and if the main file is ever unreadable CyberOptix loads the backup (and keeps the bad file as `.corrupt`) instead of silently starting from defaults. Saves from two places at once now take turns.
+- A live wallpaper from a web address can only stay on its own approved site. Before, it could also follow a link to any other site you had approved.
+- The crash log is written by one error at a time, so two errors at once cannot garble it.
 - Applying the Optimizer profile no longer adds another copy of the Ultimate Performance power plan every time: it is made once and reused, and if Windows will not make it, High performance is used. A **Remove duplicate power plans** button appears under the Ultimate Performance option while Windows holds extra copies; it keeps one and touches no other plan.
 - With the dock reserving its own strip of the screen (Stay On Top, "Let windows reach the top" off), CyberOptix no longer also resets the screen's work area to full height every 2 seconds, which fought the dock.
 - The check that spots a game or browser in front now reads the program's path through a limited-rights handle instead of opening the whole process, which is gentler on games with anti-cheat.

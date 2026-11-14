@@ -221,25 +221,41 @@ namespace CyberOptix.Models
 
         private static AppSettings Load()
         {
-            try
+            foreach (var file in new[] { PathOnDisk, PathOnDisk + ".bak" })
             {
-                if (File.Exists(PathOnDisk))
+                try
                 {
-                    var loaded = JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(PathOnDisk)) ?? new AppSettings();
+                    if (!File.Exists(file)) continue;
+                    var loaded = JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(file));
+                    if (loaded == null) continue;
                     if (!loaded.DockIconSizeV2) { if (loaded.DockIconSize == 26) loaded.DockIconSize = 18; loaded.DockIconSizeV2 = true; }   // one-time: the old default was larger than the other docks' icons
                     return loaded;
                 }
+                catch
+                {
+                    // An unreadable file (a power cut in the middle of a save): keep it for inspection, then try the backup.
+                    try { File.Copy(file, file + ".corrupt", true); } catch { }
+                }
             }
-            catch { }
             return CyberOptix.Services.SettingsDefaults.Fresh();   // no saved settings yet (a first run): start from the app's defaults
         }
 
+        private static readonly object SaveGate = new();
+
+        /// <summary>Writes the settings to a temporary file and swaps it in, so a power cut or a crash can never leave a half-written file (the old one stays as settings.json.bak).</summary>
         public static void Save()
         {
             try
             {
-                Directory.CreateDirectory(System.IO.Path.GetDirectoryName(PathOnDisk)!);
-                File.WriteAllText(PathOnDisk, JsonSerializer.Serialize(Current, new JsonSerializerOptions { WriteIndented = true }));
+                lock (SaveGate)
+                {
+                    Directory.CreateDirectory(System.IO.Path.GetDirectoryName(PathOnDisk)!);
+                    var json = JsonSerializer.Serialize(Current, new JsonSerializerOptions { WriteIndented = true });
+                    var tmp = PathOnDisk + ".tmp";
+                    File.WriteAllText(tmp, json);
+                    if (File.Exists(PathOnDisk)) File.Replace(tmp, PathOnDisk, PathOnDisk + ".bak");
+                    else File.Move(tmp, PathOnDisk);
+                }
             }
             catch { }
         }

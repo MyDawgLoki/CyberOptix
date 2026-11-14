@@ -119,7 +119,7 @@ namespace CyberOptix.Widgets
                 if (ok && remote != null && uri.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
                 {
                     var host = Uri.TryCreate(uri, UriKind.Absolute, out var nav) ? nav.IdnHost.ToLowerInvariant() : "";
-                    bool onSite = CyberOptix.Models.AppSettings.Current.LiveApprovedSites.Any(a => host == a || host.EndsWith("." + a, StringComparison.Ordinal));
+                    bool onSite = host == remote || host.EndsWith("." + remote, StringComparison.Ordinal);
                     if (!onSite && !host.Equals("wallpaper.local", StringComparison.OrdinalIgnoreCase)) ok = false;
                 }
                 if (!ok) e.Cancel = true;

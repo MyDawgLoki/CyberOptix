@@ -108,11 +108,14 @@ namespace CyberOptix.Services
                     if (lines.Count > 40) break;
                 }
                 lines.Add("");
-                var path = AppPaths.Secure(LogName);
-                var old = File.Exists(path) ? File.ReadAllText(path) : "";
-                var text = old + string.Join(Environment.NewLine, lines) + Environment.NewLine;
-                if (text.Length > 30_000) text = text.Substring(text.Length - 24_000);   // keep the newest
-                File.WriteAllText(path, text);
+                lock (Gate)
+                {
+                    var path = AppPaths.Secure(LogName);
+                    var old = File.Exists(path) ? File.ReadAllText(path) : "";
+                    var text = old + string.Join(Environment.NewLine, lines) + Environment.NewLine;
+                    if (text.Length > 30_000) text = text.Substring(text.Length - 24_000);   // keep the newest
+                    File.WriteAllText(path, text);
+                }
             }
             catch { }
         }
