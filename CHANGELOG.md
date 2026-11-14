@@ -2,7 +2,7 @@
 
 Every release lists what is new, what was fixed and what changed. The same text is in the release notes on GitHub.
 
-## Unreleased
+## v1.0.5
 
 **Changed**
 - The **Ultimate Performance power plan is off by default** (Gaming and General profiles). That plan keeps the CPU at full speed even when idle, which made the PC run hot and the fans loud as soon as a game started. It is still there as an option; it applies only if you turn it on and save it in your Gaming profile. Profiles saved by earlier versions are switched to the new default once.
