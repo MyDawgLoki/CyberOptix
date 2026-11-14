@@ -178,6 +178,10 @@
                             <Border Style="{StaticResource Card}">
                                 <StackPanel>
                                     <CheckBox x:Name="chkUltimate" Content="Ultimate Performance power plan" Tag="Keeps the CPU at full speed instead of letting it idle down. Uses more power. Off puts Windows back on the Balanced plan." IsChecked="True" Checked="TweakChanged" Unchecked="TweakChanged"/>
+                                    <StackPanel x:Name="panelDupPlans" Orientation="Horizontal" Margin="16,0,16,12" Visibility="Collapsed">
+                                        <Button x:Name="btnDupPlans" Content="Remove duplicate power plans" Click="DupPlansClicked"/>
+                                        <TextBlock x:Name="txtDupPlans" Margin="14,0,0,0" VerticalAlignment="Center" Foreground="{DynamicResource TextDimBrush}" FontSize="13" TextWrapping="Wrap"/>
+                                    </StackPanel>
                                     <Border Style="{StaticResource Divider}"/>
                                     <CheckBox x:Name="chkGameDvr" Content="Disable Game DVR" Tag="Turns off Windows background game recording, which costs a few frames per second." IsChecked="True" Checked="TweakChanged" Unchecked="TweakChanged"/>
                                     <Border Style="{StaticResource Divider}"/>

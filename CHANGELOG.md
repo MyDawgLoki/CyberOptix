@@ -5,6 +5,9 @@ Every release lists what is new, what was fixed and what changed. The same text 
 ## Unreleased
 
 **Fixed**
+- Applying the Optimizer profile no longer adds another copy of the Ultimate Performance power plan every time: it is made once and reused, and if Windows will not make it, High performance is used. A **Remove duplicate power plans** button appears under the Ultimate Performance option while Windows holds extra copies; it keeps one and touches no other plan.
+- With the dock reserving its own strip of the screen (Stay On Top, "Let windows reach the top" off), CyberOptix no longer also resets the screen's work area to full height every 2 seconds, which fought the dock.
+- The check that spots a game or browser in front now reads the program's path through a limited-rights handle instead of opening the whole process, which is gentler on games with anti-cheat.
 - Force-quitting CyberOptix (Task Manager, End process tree, a crash) now brings the Windows taskbar back and moves every desktop item in the Apps panel back onto the desktop. A small watchdog (another copy of CyberOptix.exe, started with `--watchdog`) waits for the real one; closing CyberOptix normally, restarting it, or shutting Windows down leaves things as they are.
 
 **Changed**

@@ -93,6 +93,7 @@ namespace CyberOptix.Services
         public static void KeepWorkArea()
         {
             if (!_hidden) return;
+            if (_reservedFor != IntPtr.Zero) return;   // the dock holds its own strip as an app bar: giving the whole screen back would undo it every 2 seconds
             var now = DateTime.UtcNow;
             if (now - _workCheckedAt < TimeSpan.FromSeconds(2)) return;
             _workCheckedAt = now;

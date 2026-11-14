@@ -10,10 +10,8 @@ namespace CyberOptix.Services
             OriginalSettingsService.WaitReady();          // the "before" copy must exist before anything changes
             Models.AppSettings.Current.Touch("profile");
             RunPowerShell("Checkpoint-Computer -Description 'CyberOptix Apply' -RestorePointType MODIFY_SETTINGS -ErrorAction SilentlyContinue");
-            if (profile.UltimatePerformance)
-                RunPowerShell("powercfg /duplicatescheme e9a42b02-d5df-448d-aa00-03f14749eb61; powercfg /setactive e9a42b02-d5df-448d-aa00-03f14749eb61");
-            else
-                RunPowerShell("powercfg /setactive 381b4222-f694-41f0-9685-ff5bb260df2e");
+            if (profile.UltimatePerformance) PowerPlanService.UseUltimate();   // made once, then reused
+            else PowerPlanService.UseBalanced();
             SetReg("HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\GameDVR", "AppCaptureEnabled", profile.DisableGameDVR ? 0 : 1);
             SetReg("HKCU:\\System\\GameConfigStore", "GameDVR_Enabled", profile.DisableGameDVR ? 0 : 1);
             SetReg("HKCU:\\System\\GameConfigStore", "GameDVR_FSEBehaviorMode", profile.DisableFullscreenOptimizations ? 2 : 0);

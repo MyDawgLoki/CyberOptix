@@ -26,6 +26,23 @@ namespace CyberOptix.Services
             @"\ea games\", @"\xboxgames\", @"\battle.net\games\", @"\rockstar games\",
         };
 
+        [DllImport("kernel32.dll", SetLastError = true)] private static extern IntPtr OpenProcess(uint access, bool inherit, int pid);
+        [DllImport("kernel32.dll")] private static extern bool CloseHandle(IntPtr h);
+        [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)] private static extern bool QueryFullProcessImageName(IntPtr h, uint flags, System.Text.StringBuilder name, ref int size);
+
+        private static string? ImagePath(int pid)
+        {
+            var h = OpenProcess(0x1000 /* PROCESS_QUERY_LIMITED_INFORMATION */, false, pid);
+            if (h == IntPtr.Zero) return null;
+            try
+            {
+                var sb = new System.Text.StringBuilder(1024);
+                int size = sb.Capacity;
+                return QueryFullProcessImageName(h, 0, sb, ref size) ? sb.ToString(0, size) : null;
+            }
+            finally { CloseHandle(h); }
+        }
+
         /// <summary>Reads the program in front once: is it a web browser, and is it a game?</summary>
         public static void Read(out bool browser, out bool game)
         {
@@ -36,10 +53,11 @@ namespace CyberOptix.Services
                 if (hwnd == IntPtr.Zero) return;
                 GetWindowThreadProcessId(hwnd, out uint pid);
                 if (pid == 0 || pid == Environment.ProcessId) return;
-                using var p = Process.GetProcessById((int)pid);
-                string? path = null;
-                try { path = p.MainModule?.FileName; } catch { /* a protected program: the name alone has to do */ }
-                (browser, game) = Kind(p.ProcessName, path, AppSettings.Current.CustomGames.Select(g => g.Path));
+                // Only the program's path is read, through a limited-rights handle (no memory access), which is all a protected game allows
+                // anyway and keeps the check from looking like an attempt to inspect the game.
+                string? path = ImagePath((int)pid);
+                if (path == null) return;
+                (browser, game) = Kind(System.IO.Path.GetFileNameWithoutExtension(path), path, AppSettings.Current.CustomGames.Select(g => g.Path));
             }
             catch { }
         }

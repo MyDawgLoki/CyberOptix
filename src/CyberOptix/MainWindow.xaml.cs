@@ -86,6 +86,7 @@ namespace CyberOptix
             Loaded += (_, _) =>
             {
                 OriginalSettingsService.Start(); // remember how Windows is set up now, before CyberOptix changes anything
+                _ = RefreshDupPlansAsync();
                 pgTaskbar.Initialize();
                 pgWindows.Initialize();
                 pgSettings.Initialize();
@@ -395,6 +396,27 @@ namespace CyberOptix
         }
 
         // ---------- events ----------
+
+        /// <summary>Shows the "Remove duplicate power plans" button only while Windows holds extra copies of the Ultimate Performance plan.</summary>
+        private async Task RefreshDupPlansAsync()
+        {
+            int copies = await Task.Run(() => PowerPlanService.List().Count(p => p.Name == PowerPlanService.UltimateName));
+            panelDupPlans.Visibility = copies > 1 ? Visibility.Visible : Visibility.Collapsed;
+            txtDupPlans.Text = copies > 1 ? $"Windows has {copies} copies of the Ultimate Performance plan. One is enough." : "";
+        }
+
+        private async void DupPlansClicked(object sender, RoutedEventArgs e)
+        {
+            var ask = MessageBox.Show("Delete the extra copies of the Ultimate Performance power plan and keep one?\n\nThe plan you are using now, Balanced, High performance, Power saver and any plan with another name are not touched.",
+                "Remove duplicate power plans", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No);
+            if (ask != MessageBoxResult.Yes) return;
+            btnDupPlans.IsEnabled = false;
+            int removed = await Task.Run(PowerPlanService.RemoveDuplicateUltimate);
+            btnDupPlans.IsEnabled = true;
+            await RefreshDupPlansAsync();
+            txtDupPlans.Text = $"Removed {removed} copies.";
+            panelDupPlans.Visibility = Visibility.Visible;
+        }
 
         private void ModeChanged(object sender, RoutedEventArgs e)
         {
