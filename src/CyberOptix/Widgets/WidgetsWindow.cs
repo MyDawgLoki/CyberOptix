@@ -71,7 +71,7 @@ namespace CyberOptix.Widgets
             var body = new StackPanel { Margin = new Thickness(0, 0, 14, 0) };
 
             // ---- desktop widgets ----
-            body.Children.Add(Title("Desktop widgets"));
+            body.Children.Add(Heading("Desktop widgets"));
             var widgets = new WrapPanel();
             foreach (var w in WidgetChoices.All)
             {
@@ -91,7 +91,7 @@ namespace CyberOptix.Widgets
             {
                 var defs = DockWidgetCatalog.All.Where(d => d.Group == group && !IsDesktopWidget(d.Id) && DockWidgetCatalog.Available(d)).ToList();
                 if (defs.Count == 0) continue;
-                body.Children.Add(Title(group == DockWidgetCatalog.Live ? "More" : group));
+                body.Children.Add(Heading(group == DockWidgetCatalog.Live ? "More" : group));
                 var wrap = new WrapPanel();
                 foreach (var def in defs)
                 {
@@ -112,7 +112,7 @@ namespace CyberOptix.Widgets
             // ---- Windows' own widgets ----
             if (StockWidgets.IsAvailable)
             {
-                body.Children.Add(Title("Windows widgets"));
+                body.Children.Add(Heading("Windows widgets"));
                 var row = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 2, 0, 0) };
                 var open = new Button { Content = "Open the Windows Widgets board" };
                 open.Click += (_, _) => { Close(); StockWidgets.Toggle(); };
@@ -138,7 +138,7 @@ namespace CyberOptix.Widgets
         private static bool IsDesktopWidget(string id) =>
             id == DockWidgetCatalog.WeatherId || id == DockWidgetCatalog.MediaId || id == DockWidgetCatalog.WidgetsId;
 
-        private TextBlock Title(string text)
+        private TextBlock Heading(string text)
         {
             var t = new TextBlock { Text = text, FontWeight = FontWeights.SemiBold, FontSize = 13, Margin = new Thickness(0, 14, 0, 6) };
             return t;

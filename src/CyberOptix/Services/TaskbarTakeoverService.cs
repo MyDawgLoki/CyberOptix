@@ -47,7 +47,6 @@ namespace CyberOptix.Services
         private const int ABS_AUTOHIDE = 1, ABS_ALWAYSONTOP = 2;
 
         private static bool _hidden;
-        private static int _originalState = ABS_ALWAYSONTOP;
         private static HwndSource? _source;
         private static bool _hooked;
 
