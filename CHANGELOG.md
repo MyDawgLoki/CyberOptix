@@ -4,6 +4,9 @@ Every release lists what is new, what was fixed and what changed. The same text 
 
 ## Unreleased
 
+**Changed**
+- A game or fullscreen app no longer hides the dock. With "Fall behind a game or fullscreen app" on (it was "Hide while a game or fullscreen app is open"), every dock drops behind the game, and the Windows key brings it forward with the Start menu. It goes back behind the game when the menu closes.
+
 **New**
 - A **Sleep** section on the Display page: when Windows turns the screens off and puts the PC to sleep, plugged in and (on a laptop) on battery, plus a "Turn the screens off now" button. They are Windows' own power-plan timers, the same ones as in Windows Settings.
 

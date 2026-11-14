@@ -58,7 +58,7 @@
                     <Border Style="{StaticResource Divider}"/>
                     <CheckBox x:Name="chkRunning" Content="Show running apps" Tag="Apps that are open but not pinned appear after your pinned ones." Click="Changed"/>
                     <Border Style="{StaticResource Divider}"/>
-                    <CheckBox x:Name="chkFullscreen" Content="Hide while a game or fullscreen app is open" Tag="Keeps the dock out of your game. It returns when you leave it." Click="Changed"/>
+                    <CheckBox x:Name="chkFullscreen" Content="Fall behind a game or fullscreen app" Tag="The dock drops behind a game or any app that fills the screen, so it stays out of the way. Press the Windows key and it comes forward with the Start menu; it goes back behind the game when the menu closes." Click="Changed"/>
                     <Border Style="{StaticResource Divider}"/>
                     <CheckBox x:Name="chkRecycle" Content="Show the Recycle Bin" Tag="Puts the Recycle Bin on the dock. Click it to open, right-click to empty it, and drag files, folders or shortcuts onto it to delete them the normal way (you can restore them from the Recycle Bin)." Click="Changed"/>
                     <Border Style="{StaticResource Divider}"/>

@@ -41,6 +41,7 @@ namespace CyberOptix.Widgets
         private readonly DispatcherTimer _layerTimer = new() { Interval = TimeSpan.FromMilliseconds(50) };
         private readonly DockLayerController _layerCtl = new();
         private string _appliedLayer = "";
+        private bool _behindGame;   // a game or other fullscreen app has the screen
         private string _signature = "";
         private string _glowSignature = "";
         private string _position = "Top";
@@ -171,7 +172,7 @@ namespace CyberOptix.Widgets
         {
             var h = new WindowInteropHelper(this).Handle;
             if (h == IntPtr.Zero) return;
-            string layer = LayerFor(Group);
+            string layer = _behindGame ? "Stick" : LayerFor(Group);   // behind a game that fills the screen: only the Windows key (Start menu) brings it forward
             if (layer != _appliedLayer)
             {
                 _appliedLayer = layer;
@@ -233,11 +234,11 @@ namespace CyberOptix.Widgets
             if (s.DockHideFullscreen)
             {
                 DesktopHost.Query(new WindowInteropHelper(this).Handle, out var covers, out var maximized);
-                bool hide = covers && LayerFor(Group) == "Top";   // behind the windows it is never hidden, or the pointer could not bring it back
-                var want = hide ? Visibility.Hidden : Visibility.Visible;
+                _behindGame = covers;   // the dock is not hidden: it drops behind the game, and the Windows key brings it forward
+                var want = Visibility.Visible;
                 if (Visibility != want) Visibility = want;
             }
-            else if (Visibility != Visibility.Visible) Visibility = Visibility.Visible;
+            else { _behindGame = false; if (Visibility != Visibility.Visible) Visibility = Visibility.Visible; }
         }
 
         /// <summary>

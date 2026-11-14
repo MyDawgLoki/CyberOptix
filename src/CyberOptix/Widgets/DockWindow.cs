@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -416,7 +416,8 @@ namespace CyberOptix.Widgets
         // ---------- in front of, or behind, the windows ----------
 
         /// <summary>"Top" (always in front, the default), "Fall" (behind windows, comes forward on hover) or "Stick" (behind windows, comes forward with the Start menu).</summary>
-        private static string Layer => AppSettings.Current.DockLayer is "Fall" or "Stick" ? AppSettings.Current.DockLayer : "Top";
+        private string Layer => _behindGame ? "Stick" : AppSettings.Current.DockLayer is "Fall" or "Stick" ? AppSettings.Current.DockLayer : "Top";
+        private bool _behindGame;   // a game or other fullscreen app has the screen: the dock drops behind it and only the Windows key (Start menu) brings it forward
 
         private IntPtr LayerInsertAfter() => Layer == "Top" || _layer.InFront ? new IntPtr(-1) /* HWND_TOPMOST */ : new IntPtr(1) /* HWND_BOTTOM */;
 
@@ -539,20 +540,16 @@ namespace CyberOptix.Widgets
             DockService.Flashing.RemoveWhere(h => !IsWindow(h) || DockService.IsForeground(h));
 
             // Step aside while a game or other fullscreen app has the screen.
+            // A game (or any app that fills the screen) is not a reason to hide the dock: it drops behind it, like "Stick Behind Windows",
+            // and the Windows key brings it forward together with the Start menu. The dock stays visible, so it can always come back.
+            bool behind = false;
             if (s.DockHideFullscreen)
             {
-                DesktopHost.Query(Handle, out var covers, out var maximized);
-                // With the dock behind the windows it is never hidden: it is already out of the way, and a hidden dock can neither be
-                // brought forward by the pointer nor by the Start menu (any window that fills the screen, maximized or not, used to hide it for good).
-                bool hide = covers && Layer == "Top";
-                var want = hide ? Visibility.Hidden : Visibility.Visible;
-                if (Visibility != want) Visibility = want;
-                if (hide) return;
+                DesktopHost.Query(Handle, out var covers, out _);
+                behind = covers;
             }
-            else if (Visibility != Visibility.Visible)
-            {
-                Visibility = Visibility.Visible;
-            }
+            if (behind != _behindGame) { _behindGame = behind; ApplyLayerMode(); }
+            if (Visibility != Visibility.Visible) Visibility = Visibility.Visible;
 
             if (_dragging) return;
             var apps = BuildApps(s);
