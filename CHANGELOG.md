@@ -4,19 +4,17 @@ Every release lists what is new, what was fixed and what changed. The same text 
 
 ## Unreleased
 
+**New**
+- A **Sleep** section on the Display page: when Windows turns the screens off and puts the PC to sleep, plugged in and (on a laptop) on battery, plus a "Turn the screens off now" button. They are Windows' own power-plan timers, the same ones as in Windows Settings.
+
+**Changed**
+- A game or fullscreen app no longer hides the dock. With "Fall behind a game or fullscreen app" on (it was "Hide while a game or fullscreen app is open"), every dock drops behind the game, and the Windows key brings it forward with the Start menu. It goes back behind the game when the menu closes.
+
 **Fixed**
 - Applying the Optimizer profile no longer adds another copy of the Ultimate Performance power plan every time: it is made once and reused, and if Windows will not make it, High performance is used. A **Remove duplicate power plans** button appears under the Ultimate Performance option while Windows holds extra copies; it keeps one and touches no other plan.
 - With the dock reserving its own strip of the screen (Stay On Top, "Let windows reach the top" off), CyberOptix no longer also resets the screen's work area to full height every 2 seconds, which fought the dock.
 - The check that spots a game or browser in front now reads the program's path through a limited-rights handle instead of opening the whole process, which is gentler on games with anti-cheat.
 - Force-quitting CyberOptix (Task Manager, End process tree, a crash) now brings the Windows taskbar back and moves every desktop item in the Apps panel back onto the desktop. A small watchdog (another copy of CyberOptix.exe, started with `--watchdog`) waits for the real one; closing CyberOptix normally, restarting it, or shutting Windows down leaves things as they are.
-
-**Changed**
-- A game or fullscreen app no longer hides the dock. With "Fall behind a game or fullscreen app" on (it was "Hide while a game or fullscreen app is open"), every dock drops behind the game, and the Windows key brings it forward with the Start menu. It goes back behind the game when the menu closes.
-
-**New**
-- A **Sleep** section on the Display page: when Windows turns the screens off and puts the PC to sleep, plugged in and (on a laptop) on battery, plus a "Turn the screens off now" button. They are Windows' own power-plan timers, the same ones as in Windows Settings.
-
-**Fixed**
 - Replacing the taskbar no longer asks Windows to turn on its "Automatically hide the taskbar" setting. That request made Explorer show "A toolbar is already hidden on this side of your screen" when a screen came or went (a virtual or remote display, for example), and left the setting switched on. The taskbar is hidden and its strip handed back instead.
 - Two copies of CyberOptix could run at once (for example after a restart that began with the startup task, then opening it again), and they fought over the taskbar: it kept hiding and coming back, and Windows showed "A toolbar is already hidden on this side of your screen". The "one at a time" check now looks twice (the named lock, and any other CyberOptix in the same sign-in session) and gives a closing copy a few seconds to let go before a new one gives up. A second launch just brings the running one to the front.
 
