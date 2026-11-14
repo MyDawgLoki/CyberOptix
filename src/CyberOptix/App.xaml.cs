@@ -38,7 +38,7 @@ namespace CyberOptix
                 for (int wait = 0; wait < 8; wait++)
                 {
                     bool other = System.Diagnostics.Process.GetProcessesByName(me.ProcessName)
-                        .Any(p => { try { return p.Id != me.Id && p.SessionId == me.SessionId && !p.HasExited; } catch { return false; } });
+                        .Any(p => { try { return p.Id != me.Id && p.SessionId == me.SessionId && !p.HasExited && !Services.CrashGuard.IsWatchdog(p.Id); } catch { return false; } });
                     if (!other) return true;
                     Thread.Sleep(500);   // maybe a copy that is closing
                 }
@@ -47,9 +47,25 @@ namespace CyberOptix
             catch { return true; }
         }
 
+        protected override void OnExit(ExitEventArgs e)
+        {
+            Services.CrashGuard.StandDown();   // closed on purpose: the watchdog leaves things as they are
+            base.OnExit(e);
+        }
+
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+
+            // The watchdog: another copy of this program that only waits for the real one, and puts the taskbar and the desktop items back
+            // if the real one is killed (see CrashGuard).
+            var dog = e.Args.FirstOrDefault(a => a.StartsWith(Services.CrashGuard.Argument));
+            if (dog != null)
+            {
+                if (int.TryParse(dog.Substring(Services.CrashGuard.Argument.Length), out var parent)) Services.CrashGuard.RunWatchdog(parent);
+                Shutdown(0);
+                return;
+            }
 
             // The uninstaller also runs "CyberOptix.exe --restore-desktop": everything moved into the Apps panel goes back where it came from.
             if (e.Args.Any(a => a == "--restore-desktop"))
@@ -83,6 +99,8 @@ namespace CyberOptix
             // Started by Windows at sign-in: load everything (dock, widgets, Glass Cursor, hotkeys) but stay quietly in the tray.
             if (e.Args.Any(a => a == Services.AutoStartService.StartupArgument) && Models.AppSettings.Current.StartQuietly) window.StartHidden();
             window.Show();
+            SessionEnding += (_, _) => Services.CrashGuard.StandDown();   // Windows shutting down is not a kill
+            Services.CrashGuard.Start();
             new Thread(() =>
             {
                 while (show.WaitOne()) window.ShowFromTray();

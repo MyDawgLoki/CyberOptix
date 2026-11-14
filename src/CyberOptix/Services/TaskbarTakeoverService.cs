@@ -106,7 +106,7 @@ namespace CyberOptix.Services
                     if (!GetMonitorInfo(m, ref info)) return true;
                     int gap = info.Monitor.Bottom - info.Work.Bottom;
                     if (gap <= 0 || gap > 200) return true;   // already full height, or not a taskbar-sized strip
-                    _savedWork.TryAdd((info.Work.Left, info.Monitor.Top), info.Work);
+                    if (_savedWork.TryAdd((info.Work.Left, info.Monitor.Top), info.Work)) SaveWork();
                     var full = new RECT { Left = info.Work.Left, Top = info.Work.Top, Right = info.Work.Right, Bottom = info.Monitor.Bottom };
                     SystemParametersInfo(SPI_SETWORKAREA, 0, ref full, SPIF_SENDCHANGE);
                     return true;
@@ -125,8 +125,50 @@ namespace CyberOptix.Services
                     SystemParametersInfo(SPI_SETWORKAREA, 0, ref r, SPIF_SENDCHANGE);
                 }
                 _savedWork.Clear();
+                DeleteWorkFile();
             }
             catch { }
+        }
+
+        // The old work areas are also kept in a small file, so that when CyberOptix is killed (Task Manager, a crash) the watchdog process
+        // can still give the screens their strip back.
+        private static string WorkFile => AppPaths.Secure("taskbar-workarea.txt");
+
+        private static void SaveWork()
+        {
+            try
+            {
+                System.IO.File.WriteAllLines(WorkFile, _savedWork.Values.Select(r => $"{r.Left} {r.Top} {r.Right} {r.Bottom}"));
+            }
+            catch { }
+        }
+
+        private static void DeleteWorkFile() { try { System.IO.File.Delete(WorkFile); } catch { } }
+
+        /// <summary>Puts back the work areas a dead copy of CyberOptix had changed (from its file), if any.</summary>
+        private static void RestoreWorkFromFile()
+        {
+            try
+            {
+                if (!System.IO.File.Exists(WorkFile)) return;
+                foreach (var line in System.IO.File.ReadAllLines(WorkFile))
+                {
+                    var n = line.Split(' ');
+                    if (n.Length != 4 || !n.All(x => int.TryParse(x, out _))) continue;
+                    var r = new RECT { Left = int.Parse(n[0]), Top = int.Parse(n[1]), Right = int.Parse(n[2]), Bottom = int.Parse(n[3]) };
+                    if (r.Right <= r.Left || r.Bottom <= r.Top || r.Right - r.Left > 20000 || r.Bottom - r.Top > 20000) continue;
+                    SystemParametersInfo(SPI_SETWORKAREA, 0, ref r, SPIF_SENDCHANGE);
+                }
+            }
+            catch { }
+            DeleteWorkFile();
+        }
+
+        /// <summary>Run by the watchdog process after CyberOptix was killed: the Windows taskbar and the screens' strips come back.</summary>
+        public static void RestoreAfterKill()
+        {
+            RestoreWorkFromFile();
+            foreach (var h in AllTaskbars()) ShowWindow(h, 5 /* SW_SHOW */);
         }
 
         /// <summary>Hides the taskbar windows again if Windows brought them back (it does that now and then).</summary>
@@ -155,6 +197,7 @@ namespace CyberOptix.Services
         public static void RecoverIfStranded()
         {
             if (AppSettings.Current.DockReplaceTaskbar) return; // it will be hidden again on purpose
+            RestoreWorkFromFile();
             foreach (var h in AllTaskbars())
                 if (!IsWindowVisible(h)) ShowWindow(h, 5);
         }

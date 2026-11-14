@@ -4,6 +4,9 @@ Every release lists what is new, what was fixed and what changed. The same text 
 
 ## Unreleased
 
+**Fixed**
+- Force-quitting CyberOptix (Task Manager, End process tree, a crash) now brings the Windows taskbar back and moves every desktop item in the Apps panel back onto the desktop. A small watchdog (another copy of CyberOptix.exe, started with `--watchdog`) waits for the real one; closing CyberOptix normally, restarting it, or shutting Windows down leaves things as they are.
+
 **Changed**
 - A game or fullscreen app no longer hides the dock. With "Fall behind a game or fullscreen app" on (it was "Hide while a game or fullscreen app is open"), every dock drops behind the game, and the Windows key brings it forward with the Start menu. It goes back behind the game when the menu closes.
 
