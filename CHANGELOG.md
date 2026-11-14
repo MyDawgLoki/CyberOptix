@@ -9,6 +9,7 @@ Every release lists what is new, what was fixed and what changed. The same text 
 - A **Sleep** section on the Display page: when Windows turns the screens off and puts the PC to sleep, plugged in and (on a laptop) on battery, plus a "Turn the screens off now" button. They are Windows' own power-plan timers, the same ones as in Windows Settings.
 
 **Changed**
+- A live wallpaper from a **web address** now asks you to approve that site first (with a warning that the page runs inside CyberOptix, which has administrator rights). It only runs for approved sites, the page can only stay on that site, and **Forget approved web addresses** clears the list. Web pages from a file are not affected.
 - Applying an Optimizer profile starts one PowerShell for the restore point, the SysMain service and the network tweak, instead of one for each setting. Registry values and the power plan are written directly, so there are far fewer short CPU spikes.
 - A game or fullscreen app no longer hides the dock. With "Fall behind a game or fullscreen app" on (it was "Hide while a game or fullscreen app is open"), every dock drops behind the game, and the Windows key brings it forward with the Start menu. It goes back behind the game when the menu closes.
 

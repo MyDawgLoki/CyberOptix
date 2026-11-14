@@ -1,3 +1,4 @@
+using System.Linq;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -113,6 +114,14 @@ namespace CyberOptix.Widgets
                 var uri = e.Uri ?? "";
                 bool ok = uri.StartsWith("https://", StringComparison.OrdinalIgnoreCase) ||
                           uri.StartsWith("data:", StringComparison.OrdinalIgnoreCase) || uri.StartsWith("about:blank", StringComparison.OrdinalIgnoreCase);
+                // A web address wallpaper stays on the host (or its sub-domains) the user approved: a redirect or a link elsewhere is refused.
+                var remote = LiveWallpaperService.RemoteHost(_kind, _source);
+                if (ok && remote != null && uri.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+                {
+                    var host = Uri.TryCreate(uri, UriKind.Absolute, out var nav) ? nav.IdnHost.ToLowerInvariant() : "";
+                    bool onSite = CyberOptix.Models.AppSettings.Current.LiveApprovedSites.Any(a => host == a || host.EndsWith("." + a, StringComparison.Ordinal));
+                    if (!onSite && !host.Equals("wallpaper.local", StringComparison.OrdinalIgnoreCase)) ok = false;
+                }
                 if (!ok) e.Cancel = true;
             };
 

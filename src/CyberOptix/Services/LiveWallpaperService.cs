@@ -22,10 +22,33 @@ namespace CyberOptix.Services
             Timer.Tick += (_, _) => CheckPause();
         }
 
+        /// <summary>The host of a web address wallpaper (kind Web and https://), or null for a file.</summary>
+        public static string? RemoteHost(string kind, string source)
+        {
+            if (kind != "Web" || !source.StartsWith("https://", StringComparison.OrdinalIgnoreCase)) return null;
+            return Uri.TryCreate(source, UriKind.Absolute, out var u) && !string.IsNullOrEmpty(u.Host) ? u.IdnHost.ToLowerInvariant() : "";
+        }
+
+        public static bool IsApproved(string host) => host.Length > 0 && AppSettings.Current.LiveApprovedSites.Contains(host);
+
+        public static void Approve(string host)
+        {
+            if (host.Length == 0 || IsApproved(host)) return;
+            AppSettings.Current.LiveApprovedSites.Add(host);
+            AppSettings.Save();
+        }
+
         public static void Start(string kind, string source)
         {
             Stop();
 
+            // A web address runs a web page with this app's administrator rights, so it only runs for a host the user approved.
+            var remote = RemoteHost(kind, source);
+            if (remote != null && !IsApproved(remote))
+            {
+                Error?.Invoke("That web address has not been approved. Press Start and confirm it first.");
+                return;
+            }
             var window = new LiveWallpaperWindow(kind, source, AppSettings.Current.LiveMute);
             window.Failed += message =>
             {

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
@@ -208,6 +208,8 @@ namespace CyberOptix.Models
         public bool LiveEnabled { get; set; }
         public string LiveKind { get; set; } = "Video"; // Video | Gif | Web
         public string? LiveSource { get; set; }
+        /// <summary>Web addresses (host names) the user approved for the Web page live wallpaper. A remote page only runs for an approved host.</summary>
+        public List<string> LiveApprovedSites { get; set; } = new();
         public bool LiveMute { get; set; } = true;
         public bool LivePauseFullscreen { get; set; } = true;
         public bool LivePauseMaximized { get; set; } = true;

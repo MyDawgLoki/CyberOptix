@@ -69,6 +69,7 @@
             <StackPanel Orientation="Horizontal" Margin="0,24,0,0">
                 <Button x:Name="btnStart" Content="Start live wallpaper" Style="{StaticResource PrimaryButton}" Click="StartClicked"/>
                 <Button x:Name="btnStop" Content="Stop" Margin="10,0,0,0" Click="StopClicked"/>
+                <Button x:Name="btnForget" Content="Forget approved web addresses" Margin="10,0,0,0" Click="ForgetClicked"/>
                 <TextBlock x:Name="txtStatus" Foreground="{DynamicResource TextDimBrush}" FontSize="13" VerticalAlignment="Center"
                            Margin="16,0,0,0" TextWrapping="Wrap" MaxWidth="420"/>
             </StackPanel>

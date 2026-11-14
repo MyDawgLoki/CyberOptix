@@ -114,6 +114,22 @@ namespace CyberOptix.Pages
             var source = txtSource.Text.Trim();
             if (source.Length == 0) { txtStatus.Text = "Choose a file first."; return; }
 
+            var host = LiveWallpaperService.RemoteHost(Kind, source);
+            if (host != null)
+            {
+                if (host.Length == 0) { txtStatus.Text = "That is not a valid web address."; return; }
+                if (!LiveWallpaperService.IsApproved(host))
+                {
+                    var ask = MessageBox.Show(
+                        "A web page wallpaper runs a real web page inside CyberOptix, and CyberOptix has administrator rights.\n\n" +
+                        "Only approve an address you trust completely: " + host + "\n\n" +
+                        "The page can only stay on that site; it cannot open windows or talk to CyberOptix. A video or GIF is the safer choice.\n\nApprove " + host + " and start?",
+                        "Approve this web address?", MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No);
+                    if (ask != MessageBoxResult.Yes) { txtStatus.Text = "Not approved, so it was not started."; return; }
+                    LiveWallpaperService.Approve(host);
+                }
+            }
+
             var s = AppSettings.Current;
             s.LiveKind = Kind;
             s.LiveSource = source;
@@ -124,6 +140,16 @@ namespace CyberOptix.Pages
             LiveWallpaperService.Start(Kind, source);
             UpdateButtons();
             txtStatus.Text = "Live wallpaper is running. It stops when you close CyberOptix.";
+        }
+
+        private void ForgetClicked(object sender, RoutedEventArgs e)
+        {
+            int n = AppSettings.Current.LiveApprovedSites.Count;
+            AppSettings.Current.LiveApprovedSites.Clear();
+            AppSettings.Save();
+            if (LiveWallpaperService.RemoteHost(Kind, txtSource.Text.Trim()) != null) { AppSettings.Current.LiveEnabled = false; LiveWallpaperService.Stop(); }
+            UpdateButtons();
+            txtStatus.Text = n == 0 ? "No web addresses were approved." : $"Forgot {n} approved web address{(n == 1 ? "" : "es")}.";
         }
 
         private void StopClicked(object sender, RoutedEventArgs e)
