@@ -37,6 +37,8 @@ namespace CyberOptix.Widgets
         private ScrollViewer? _scroller;
         private readonly Border _moveButton = new();
         private readonly Border _moveBackButton = new();
+        private readonly Border _autoButton = new();
+        private readonly TextBlock _autoText = new() { FontSize = 13, FontWeight = FontWeights.Medium, Margin = new Thickness(8, 0, 0, 0), VerticalAlignment = VerticalAlignment.Center };
         private readonly Border _confirmBar = new();
         private readonly TextBlock _confirmText = new() { TextWrapping = TextWrapping.Wrap, VerticalAlignment = VerticalAlignment.Center };
         private readonly TextBlock _status = new() { FontSize = 12, TextWrapping = TextWrapping.Wrap, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(4, 0, 0, 0) };
@@ -269,6 +271,9 @@ namespace CyberOptix.Widgets
             chip.MouseLeftButtonDown += (_, e) => e.Handled = true;
         }
 
+        private void ShowAutoState() =>
+            _autoText.Text = CyberOptix.Models.AppSettings.Current.AutoMoveDesktopItems ? "Auto-move at start-up: On" : "Auto-move at start-up: Off";
+
         private FrameworkElement BuildFooter()
         {
             var footer = new StackPanel { Margin = new Thickness(0, 12, 0, 0) };
@@ -281,9 +286,25 @@ namespace CyberOptix.Widgets
             _moveBackButton.ToolTip = new TextBlock { Text = "Puts everything in this panel back on your desktop, in the place it came from. Start-up entries follow them, and nothing is duplicated.", TextWrapping = TextWrapping.Wrap, MaxWidth = 300 };
             _moveBackButton.MouseLeftButtonUp += (_, _) => MoveAllBack();
 
+            StyleChip(_autoButton, "", "");
+            var autoRow = (StackPanel)_autoButton.Child;
+            autoRow.Children.RemoveAt(1);
+            autoRow.Children.Add(_autoText);
+            _autoButton.ToolTip = new TextBlock { Text = "When on, everything on your desktop (shortcuts, apps, files and folders) moves into this panel each time CyberOptix starts, so you do not have to press the button. Move To Desktop still puts it all back.", TextWrapping = TextWrapping.Wrap, MaxWidth = 300 };
+            _autoButton.MouseLeftButtonUp += (_, _) =>
+            {
+                var s = CyberOptix.Models.AppSettings.Current;
+                s.AutoMoveDesktopItems = !s.AutoMoveDesktopItems;
+                CyberOptix.Models.AppSettings.Save();
+                ShowAutoState();
+                _status.Text = s.AutoMoveDesktopItems ? "The desktop moves in here each time CyberOptix starts." : "The desktop is left alone at start-up.";
+            };
+            ShowAutoState();
+
             var buttons = new WrapPanel { VerticalAlignment = VerticalAlignment.Center };
             buttons.Children.Add(_moveButton);
             buttons.Children.Add(_moveBackButton);
+            buttons.Children.Add(_autoButton);
             _status.SetResourceReference(TextBlock.ForegroundProperty, "TextDimBrush");
             buttons.Children.Add(_status);
 

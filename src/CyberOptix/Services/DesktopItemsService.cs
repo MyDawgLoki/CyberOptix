@@ -381,6 +381,9 @@ namespace CyberOptix.Services
             return held;
         }
 
+        /// <summary>True when the Apps panel has been used on this PC before (there is a record of what it moved).</summary>
+        public static bool HasBeenUsed => File.Exists(ManifestPath);
+
         /// <summary>How many things are in the panel, so there is something to move back.</summary>
         public static int MovedCount => HeldPaths().Count;
 

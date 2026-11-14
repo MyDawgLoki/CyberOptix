@@ -6,7 +6,7 @@ namespace CyberOptix.Models
     {
         public string Mode { get; set; } = "Gaming";
         public string? SelectedGame { get; set; }
-        public bool UltimatePerformance { get; set; } = true;
+        public bool UltimatePerformance { get; set; } = false;   // off unless the user saves it in their Gaming profile (it keeps the CPU at full speed and runs hot)
         public bool DisableGameDVR { get; set; } = true;
         public bool DisableFullscreenOptimizations { get; set; } = true;
         public bool HardwareAcceleratedGPUScheduling { get; set; } = true;

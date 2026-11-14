@@ -177,7 +177,7 @@
                             <TextBlock Text="Windows tweaks" Style="{StaticResource GroupTitle}" Margin="4,0,0,10"/>
                             <Border Style="{StaticResource Card}">
                                 <StackPanel>
-                                    <CheckBox x:Name="chkUltimate" Content="Ultimate Performance power plan" Tag="Keeps the CPU at full speed instead of letting it idle down. Uses more power. Off puts Windows back on the Balanced plan." IsChecked="True" Checked="TweakChanged" Unchecked="TweakChanged"/>
+                                    <CheckBox x:Name="chkUltimate" Content="Ultimate Performance power plan" Tag="Keeps the CPU at full speed instead of letting it idle down. Uses more power, makes more heat and louder fans. Off (the default) puts Windows on the Balanced plan." IsChecked="False" Checked="TweakChanged" Unchecked="TweakChanged"/>
                                     <StackPanel x:Name="panelDupPlans" Orientation="Horizontal" Margin="16,0,16,12" Visibility="Collapsed">
                                         <Button x:Name="btnDupPlans" Content="Remove duplicate power plans" Click="DupPlansClicked"/>
                                         <TextBlock x:Name="txtDupPlans" Margin="14,0,0,0" VerticalAlignment="Center" Foreground="{DynamicResource TextDimBrush}" FontSize="13" TextWrapping="Wrap"/>

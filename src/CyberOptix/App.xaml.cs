@@ -53,6 +53,27 @@ namespace CyberOptix
             base.OnExit(e);
         }
 
+        /// <summary>
+        /// Puts what is on the desktop into the Apps panel at start-up (after a force-quit the watchdog puts everything back on the desktop, and this
+        /// takes it in again). The first time, it is on only if the panel was used before; it can be switched off in the panel.
+        /// </summary>
+        private static void StartAutoMove()
+        {
+            var s = Models.AppSettings.Current;
+            if (!s.AutoMoveDesktopSeen)
+            {
+                s.AutoMoveDesktopSeen = true;
+                s.AutoMoveDesktopItems = Services.DesktopItemsService.HasBeenUsed;
+                Models.AppSettings.Save();
+            }
+            if (!s.AutoMoveDesktopItems) return;
+            new Thread(() =>
+            {
+                Thread.Sleep(4000);   // let Explorer and the desktop finish loading
+                try { Services.DesktopItemsService.MoveDesktopItemsHere(); } catch { }
+            }) { IsBackground = true, Name = "CyberOptix auto-move" }.Start();
+        }
+
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
@@ -102,6 +123,7 @@ namespace CyberOptix
             window.Show();
             SessionEnding += (_, _) => Services.CrashGuard.StandDown();   // Windows shutting down is not a kill
             Services.CrashGuard.Start();
+            StartAutoMove();
             new Thread(() =>
             {
                 while (show.WaitOne()) window.ShowFromTray();

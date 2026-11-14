@@ -191,7 +191,7 @@
   "GamingProfile": {
     "Mode": "Gaming",
     "SelectedGame": null,
-    "UltimatePerformance": true,
+    "UltimatePerformance": false,
     "DisableGameDVR": false,
     "DisableFullscreenOptimizations": true,
     "HardwareAcceleratedGPUScheduling": true,
@@ -242,7 +242,7 @@
   "GeneralProfile": {
     "Mode": "General",
     "SelectedGame": null,
-    "UltimatePerformance": true,
+    "UltimatePerformance": false,
     "DisableGameDVR": true,
     "DisableFullscreenOptimizations": false,
     "HardwareAcceleratedGPUScheduling": true,

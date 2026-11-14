@@ -68,6 +68,9 @@ namespace CyberOptix.Models
         public bool WinAccentOnStart { get; set; } = true;         // show the accent color on Start and the taskbar
         public bool WinAccentOnTitle { get; set; } = true;         // show it on title bars and window borders
 
+        public bool UltimateOffV1 { get; set; }                  // set once the saved profiles have been switched to the cooler default (Ultimate Performance off)
+        public bool AutoMoveDesktopItems { get; set; }           // move what is on the desktop into the Apps panel each time CyberOptix starts
+        public bool AutoMoveDesktopSeen { get; set; }            // set once the first run has decided the line above (on if the Apps panel was used before)
         public bool DockIconSizeV2 { get; set; }                 // set once the old default size (26) has been moved to the smaller default
         public bool DockShowRunning { get; set; } = true;
         public bool DockShowRecycleBin { get; set; } = true;       // the Recycle Bin on the dock: click to open, drop files on it to delete them
@@ -228,6 +231,7 @@ namespace CyberOptix.Models
                     if (!File.Exists(file)) continue;
                     var loaded = JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(file));
                     if (loaded == null) continue;
+                    if (!loaded.UltimateOffV1) { loaded.GamingProfile.UltimatePerformance = false; loaded.GeneralProfile.UltimatePerformance = false; loaded.UltimateOffV1 = true; }   // one-time: that plan keeps the CPU at full speed and was on by default
                     if (!loaded.DockIconSizeV2) { if (loaded.DockIconSize == 26) loaded.DockIconSize = 18; loaded.DockIconSizeV2 = true; }   // one-time: the old default was larger than the other docks' icons
                     return loaded;
                 }
