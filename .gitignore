@@ -40,3 +40,6 @@ originals.json
 ram-state.json
 moved-shortcuts.json
 /settings.json
+
+# Local project notes for the developer and Claude; never published
+MEMORY.md
