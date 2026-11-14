@@ -2,7 +2,7 @@
 
 Every release lists what is new, what was fixed and what changed. The same text is in the release notes on GitHub.
 
-## Unreleased
+## v1.0.4
 
 **New**
 - A **crash handler**: an error nobody handled is written to `crash.log` (error and call stack, personal folders replaced by placeholders, kept under 30 KB, never sent anywhere). One error on the screen's thread is logged and CyberOptix carries on; a burst of errors, or a fatal one, puts the Windows taskbar back and restarts CyberOptix once (at most once every five minutes, so a start-up bug cannot loop).
