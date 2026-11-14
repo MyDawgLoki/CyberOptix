@@ -9,6 +9,7 @@
             <TextBlock Text="Your screens, wallpapers, live wallpaper and desktop clock in one place." Style="{StaticResource PageSub}"/>
 
             <pages:DisplayPage x:Name="pgScreens"/>
+            <pages:SleepSection x:Name="pgSleep"/>
             <pages:WallpaperPage x:Name="pgWallpaper"/>
             <pages:DesktopClockPage x:Name="pgClock"/>
             <pages:LiveWallpaperPage x:Name="pgLive"/>

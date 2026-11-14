@@ -11,6 +11,7 @@ namespace CyberOptix.Pages
         public void Initialize()
         {
             pgScreens.Initialize();
+            pgSleep.Initialize();
             pgWallpaper.Initialize();
             pgClock.Initialize();
             pgLive.Initialize();

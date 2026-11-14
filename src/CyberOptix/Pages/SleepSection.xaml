@@ -1,0 +1,36 @@
+<UserControl x:Class="CyberOptix.Pages.SleepSection"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ctl="clr-namespace:CyberOptix.Controls">
+    <StackPanel Margin="0,44,0,0">
+        <TextBlock Text="Sleep" Style="{StaticResource SectionTitle}"/>
+        <TextBlock Text="When Windows turns your screens off and puts the PC to sleep after you stop using it. These are Windows' own timers for the power plan in use, the same ones as in Windows Settings, System, Power." Style="{StaticResource PageSub}"/>
+
+        <Border Style="{StaticResource Card}">
+            <StackPanel>
+                <ctl:SettingRow Title="Turn off the screens" Description="After this long without a mouse or keyboard, while plugged in.">
+                    <ComboBox x:Name="cmbScreenAc" Width="170" SelectionChanged="Changed"/>
+                </ctl:SettingRow>
+                <Border Style="{StaticResource Divider}"/>
+                <ctl:SettingRow Title="Put the PC to sleep" Description="After this long without a mouse or keyboard, while plugged in.">
+                    <ComboBox x:Name="cmbSleepAc" Width="170" SelectionChanged="Changed"/>
+                </ctl:SettingRow>
+                <StackPanel x:Name="panelBattery" Visibility="Collapsed">
+                    <Border Style="{StaticResource Divider}"/>
+                    <ctl:SettingRow Title="Turn off the screens on battery" Description="The same, while running on battery.">
+                        <ComboBox x:Name="cmbScreenDc" Width="170" SelectionChanged="Changed"/>
+                    </ctl:SettingRow>
+                    <Border Style="{StaticResource Divider}"/>
+                    <ctl:SettingRow Title="Put the PC to sleep on battery" Description="The same, while running on battery.">
+                        <ComboBox x:Name="cmbSleepDc" Width="170" SelectionChanged="Changed"/>
+                    </ctl:SettingRow>
+                </StackPanel>
+                <Border Style="{StaticResource Divider}"/>
+                <StackPanel Orientation="Horizontal" Margin="16,14">
+                    <Button Content="Turn the screens off now" Click="ScreensOffClicked"/>
+                    <TextBlock x:Name="txtStatus" Margin="16,0,0,0" VerticalAlignment="Center" Foreground="{DynamicResource TextDimBrush}" FontSize="13" TextWrapping="Wrap"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+    </StackPanel>
+</UserControl>
