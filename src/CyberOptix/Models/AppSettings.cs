@@ -217,6 +217,21 @@ namespace CyberOptix.Models
         public bool LivePauseFullscreen { get; set; } = true;
         public bool LivePauseMaximized { get; set; } = true;
 
+        // ---- AI Agents: a floating Chat window that embeds Grok, Perplexity, ChatGPT, Claude, Gemini or a local LLM's own web page ----
+        public bool AiChatEnabled { get; set; }                       // the Chat window is open
+        public string AiChatPlatform { get; set; } = "chatgpt";       // chatgpt | gemini | grok | claude | perplexity | localllm: the tab shown last
+        public string AiChatLayer { get; set; } = "Fall";             // Top | Fall | Stick, same meaning as the dock's layer
+        public double AiChatX { get; set; } = -1;                     // -1 = not placed yet; it centers itself once, then remembers where it was put
+        public double AiChatY { get; set; } = -1;
+        public double AiChatWidth { get; set; } = 420;
+        public double AiChatHeight { get; set; } = 640;
+        /// <summary>The user's own local LLM web page (for example a local Ollama or LM Studio web UI), shown in the Chat window's "Local LLM" tab.</summary>
+        public string AiChatLocalLlmUrl { get; set; } = "";
+        /// <summary>Hosts approved for the Chat window: the Local LLM address, once the user confirms it. The five AI platforms need no approval.</summary>
+        public List<string> AiChatApprovedHosts { get; set; } = new();
+        /// <summary>An optional API key or bearer token for the local LLM, sent only to its own host. Encrypted with DPAPI; empty means none is set.</summary>
+        public string AiChatLocalLlmKeyEnc { get; set; } = "";
+
         // %ProgramData%\CyberOptix\settings.json (admin-only; an older copy in %AppData% is moved across on first run)
         private static readonly string PathOnDisk = CyberOptix.Services.AppPaths.Secure("settings.json");
 

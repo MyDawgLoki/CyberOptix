@@ -2,6 +2,11 @@
 
 Every release lists what is new, what was fixed and what changed. The same text is in the release notes on GitHub.
 
+## Unreleased
+
+**New**
+- **AI Agents**: a new page, and a floating **Chat window** for Grok, Perplexity, ChatGPT, Claude and Gemini, plus your own local LLM. Each tab shows that platform's own sign-in and chat page (so its voice input and transcription are its own too, not rebuilt by CyberOptix), and the window sits in front of or behind other windows the same way an individual dock does ("Stay On Top", "Fall Behind Windows" or "Stick Behind Windows"). A **Local LLM** tab takes any web address you approve (for example a local Ollama or LM Studio web UI) and an optional API key, encrypted with Windows DPAPI and sent only to that address.
+
 ## v1.0.5
 
 **Changed**

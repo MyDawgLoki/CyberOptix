@@ -68,6 +68,12 @@
                             <TextBlock Text="Widgets" FontWeight="Medium" Margin="10,0,0,0"/>
                         </StackPanel>
                     </RadioButton>
+                    <RadioButton x:Name="navAiAgents" Tag="AiAgents" GroupName="Nav" Style="{StaticResource NavItem}" Checked="NavChecked">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE8BD;" Style="{StaticResource Icon}" Width="22"/>
+                            <TextBlock Text="AI Agents" FontWeight="Medium" Margin="10,0,0,0"/>
+                        </StackPanel>
+                    </RadioButton>
                     <RadioButton x:Name="navHardware" Tag="Hardware" GroupName="Nav" Style="{StaticResource NavItem}" Checked="NavChecked">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="&#xE765;" Style="{StaticResource Icon}" Width="22"/>
@@ -297,6 +303,7 @@
                 <pages:TaskManagerPage x:Name="pgTasks" Visibility="Collapsed"/>
                 <pages:DisplayHub x:Name="pgDisplay" Visibility="Collapsed"/>
                 <pages:WidgetsHub x:Name="pgWidgetsTab" Visibility="Collapsed"/>
+                <pages:AiAgentsPage x:Name="pgAiAgents" Visibility="Collapsed"/>
                 <pages:HardwarePage x:Name="pgHardware" Visibility="Collapsed"/>
                 <pages:DockPage x:Name="pgDock" Visibility="Collapsed"/>
                 <pages:TaskbarPage x:Name="pgTaskbar" Visibility="Collapsed"/>

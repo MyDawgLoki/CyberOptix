@@ -97,6 +97,8 @@ namespace CyberOptix
                 pgDock.Initialize();
                 AppsPanelService.RestorePinned(); // the pinned Apps panel comes back where it was // brings the dock back if it was on last time
                 pgWidgetsTab.Initialize();
+                pgAiAgents.Initialize();
+                ChatWindowService.Apply();  // the Chat window comes back if it was open last time
                 MediaColorService.Sync();   // follow the media player's color if that setting is on
                 if (!AppSettings.Current.DockWidgetsIconOffered)
                 {
@@ -124,6 +126,7 @@ namespace CyberOptix
             Closed += (_, _) =>
             {
                 HardwareService.Instance.Shutdown(); // also returns any manually set fan to automatic
+                ChatWindowService.Stop();
                 DockService.Stop();
                 AppsPanelService.StopAll();
                 HotkeyService.Stop();
@@ -149,8 +152,8 @@ namespace CyberOptix
 
         private void ShowPage(string name)
         {
-            FrameworkElement[] pages = { pgHome, pgOptimizer, pgTasks, pgDisplay, pgWidgetsTab, pgHardware, pgDock, pgTaskbar, pgWindows, pgSettings };
-            string[] names = { "Home", "Optimizer", "Tasks", "Display", "Widgets", "Hardware", "Dock", "Taskbar", "Windows", "Settings" };
+            FrameworkElement[] pages = { pgHome, pgOptimizer, pgTasks, pgDisplay, pgWidgetsTab, pgAiAgents, pgHardware, pgDock, pgTaskbar, pgWindows, pgSettings };
+            string[] names = { "Home", "Optimizer", "Tasks", "Display", "Widgets", "AiAgents", "Hardware", "Dock", "Taskbar", "Windows", "Settings" };
 
             modeSwitch.Visibility = name == "Optimizer" ? Visibility.Visible : Visibility.Collapsed;
 

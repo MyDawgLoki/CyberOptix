@@ -25,6 +25,7 @@ namespace CyberOptix
             AddResetButton(StackOf(pgTasks), "Tasks");
             AddResetButton(StackOf(pgDisplay), "Display");
             AddResetButton(StackOf(pgWidgetsTab), "Widgets");
+            AddResetButton(StackOf(pgAiAgents), "AiAgents");
             AddResetButton(StackOf(pgHardware), "Hardware");
             AddResetButton(StackOf(pgDock), "Dock");
             AddResetButton(StackOf(pgTaskbar), "Taskbar");
@@ -77,6 +78,11 @@ namespace CyberOptix
                         SettingsDefaults.Reset(SettingsDefaults.Widgets);
                         WidgetManager.Apply();
                         pgWidgetsTab.Initialize();
+                        break;
+                    case "AiAgents":
+                        SettingsDefaults.Reset(SettingsDefaults.AiAgents);
+                        ChatWindowService.Apply();
+                        pgAiAgents.Initialize();
                         break;
                     case "Hardware":
                         SettingsDefaults.Reset(SettingsDefaults.Hardware);

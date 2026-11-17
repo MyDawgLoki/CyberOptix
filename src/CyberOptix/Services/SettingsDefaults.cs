@@ -89,6 +89,11 @@ namespace CyberOptix.Services
             "DockSearchAtBottom", "DockStartAtBottom", "DockFloatOverWindows", "DockReplaceTaskbar", "IndividualDocks", "IndividualDockLayers", "IconGroups", "DockPlaceOrder", "IconOrder",
         };
         public static readonly string[] WindowManager = { nameof(AppSettings.HotkeysEnabled), nameof(AppSettings.Gap) };
+        public static readonly string[] AiAgents =
+        {
+            "AiChatEnabled", "AiChatPlatform", "AiChatLayer", "AiChatX", "AiChatY", "AiChatWidth", "AiChatHeight",
+            "AiChatLocalLlmUrl", "AiChatApprovedHosts", "AiChatLocalLlmKeyEnc",
+        };
         public static readonly string[] AppSettingsPage =
         {
             "AccentHex", "TintHex", "GlassTint", "WindowOpacity", "Backdrop", "FontHex", "MatchMediaAccent", "MatchMediaWindow", "MatchMediaText", "MatchMediaColor", "MatchMediaGlow", "CardHex",
