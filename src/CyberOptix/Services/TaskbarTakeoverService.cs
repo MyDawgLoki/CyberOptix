@@ -175,8 +175,40 @@ namespace CyberOptix.Services
         public static void KeepHidden()
         {
             if (!_hidden || DateTime.UtcNow < _holdUntil) return;
+            // When the user has Windows' own "Hidden" (auto-hide) on, Windows keeps the taskbar out of sight and frees its strip. Hiding the window
+            // as well made the two fight (the taskbar flashed and Explorer said "A toolbar is already hidden on this side of your screen"),
+            // so the taskbar is handed back to Windows once and left alone while that setting is on.
+            if (WindowsAutoHides())
+            {
+                if (!_handedToWindows)
+                {
+                    _handedToWindows = true;
+                    foreach (var h in AllTaskbars()) ShowWindow(h, 4 /* SW_SHOWNOACTIVATE */);
+                }
+                return;
+            }
+            _handedToWindows = false;
             foreach (var h in AllTaskbars())
                 if (IsWindowVisible(h)) ShowWindow(h, 0 /* SW_HIDE */);
+        }
+
+        private static bool _handedToWindows;
+        private static bool _autoHide;
+        private static DateTime _autoHideCheckedAt = DateTime.MinValue;
+
+        /// <summary>True while Windows' own "Automatically hide the taskbar" is on (read at most once a second).</summary>
+        private static bool WindowsAutoHides()
+        {
+            var now = DateTime.UtcNow;
+            if (now - _autoHideCheckedAt < TimeSpan.FromSeconds(1)) return _autoHide;
+            _autoHideCheckedAt = now;
+            try
+            {
+                var data = new APPBARDATA { cbSize = Marshal.SizeOf<APPBARDATA>(), hWnd = MainTaskbar };
+                _autoHide = ((int)(ulong)SHAppBarMessage(ABM_GETSTATE, ref data) & ABS_AUTOHIDE) != 0;
+            }
+            catch { _autoHide = false; }
+            return _autoHide;
         }
 
         /// <summary>Puts the Windows taskbar back exactly as it was.</summary>

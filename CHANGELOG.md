@@ -7,6 +7,11 @@ Every release lists what is new, what was fixed and what changed. The same text 
 **New**
 - **AI Agents**: a new page, and a floating **Chat window** for Grok, Perplexity, ChatGPT, Claude and Gemini, plus your own local LLM. Each tab shows that platform's own sign-in and chat page (so its voice input and transcription are its own too, not rebuilt by CyberOptix), and the window sits in front of or behind other windows the same way an individual dock does ("Stay On Top", "Fall Behind Windows" or "Stick Behind Windows"). A **Local LLM** tab takes any web address you approve (for example a local Ollama or LM Studio web UI) and an optional API key, encrypted with Windows DPAPI and sent only to that address.
 
+## Unreleased
+
+**Fixed**
+- With Windows' own taskbar setting **Hidden** (Automatically hide the taskbar) turned on, the taskbar flashed on the bottom of the screen and Explorer showed "A toolbar is already hidden on this side of your screen". CyberOptix was hiding the taskbar window while Windows was also showing and hiding it, so the two fought. While Windows' auto-hide is on, CyberOptix now leaves the taskbar to Windows (it stays hidden, and appears when the pointer touches the screen edge). With auto-hide off, CyberOptix hides it as before.
+
 ## v1.0.5
 
 **Changed**
