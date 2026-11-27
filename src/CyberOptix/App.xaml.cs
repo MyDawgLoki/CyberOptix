@@ -70,7 +70,7 @@ namespace CyberOptix
             new Thread(() =>
             {
                 Thread.Sleep(4000);   // let Explorer and the desktop finish loading
-                try { Services.DesktopItemsService.MoveDesktopItemsHere(); } catch { }
+                try { Services.DesktopItemsService.MoveDesktopItemsHere(includeShared: false); } catch { }   // never the shared desktop: it is every account's
             }) { IsBackground = true, Name = "CyberOptix auto-move" }.Start();
         }
 

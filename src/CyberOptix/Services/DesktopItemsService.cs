@@ -253,7 +253,7 @@ namespace CyberOptix.Services
         /// folders on your desktop. A shortcut the panel already has, or a second copy of one, is listed as a duplicate: it is tucked away,
         /// not shown twice. Hidden and system entries (desktop.ini) are left alone.
         /// </summary>
-        public static MovePlan PlanMove()
+        public static MovePlan PlanMove(bool includeShared = true)
         {
             var inPanel = KeysIn(ShortcutsFolder);
             var candidates = new List<FileInfo>();
@@ -263,6 +263,7 @@ namespace CyberOptix.Services
             foreach (var folder in new[] { UserDesktop, PublicDesktop })
             {
                 if (string.IsNullOrEmpty(folder)) continue;
+                if (!includeShared && !string.Equals(folder, UserDesktop, StringComparison.OrdinalIgnoreCase)) continue;   // the shared desktop belongs to every account
                 try
                 {
                     if (!Directory.Exists(folder)) continue;
@@ -417,9 +418,9 @@ namespace CyberOptix.Services
         /// and files and folders into the hidden folder inside the Desktop. Nothing is deleted or copied, and each thing's old place is remembered.
         /// Start-up and pinned records that pointed at something that moved are updated to its new location.
         /// </summary>
-        public static MoveResult MoveDesktopItemsHere()
+        public static MoveResult MoveDesktopItemsHere(bool includeShared = true)
         {
-            var plan = PlanMove();
+            var plan = PlanMove(includeShared);
             var manifest = ReadManifest();
             int shortcuts = 0, files = 0, folders = 0, duplicates = 0, shared = 0, failed = 0, updated = 0;
 

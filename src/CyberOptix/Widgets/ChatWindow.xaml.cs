@@ -181,11 +181,12 @@ namespace CyberOptix.Widgets
             core.Settings.AreDevToolsEnabled = false;
             core.Settings.AreHostObjectsAllowed = false;
             core.Settings.IsWebMessageEnabled = false;
+            core.Settings.IsPasswordAutosaveEnabled = false;   // no passwords or form data are kept by this window: only the sign-in session
+            core.Settings.IsGeneralAutofillEnabled = false;
             core.NewWindowRequested += NewWindowRequested;
             core.PermissionRequested += PermissionRequested;
             core.NavigationStarting += NavigationStarting;
-            core.AddWebResourceRequestedFilter("*", CoreWebView2WebResourceContext.All);
-            core.WebResourceRequested += WebResourceRequested;
+            core.WebResourceRequested += WebResourceRequested;   // only does anything while the Local LLM tab has a key filter (see UpdateKeyFilter)
             _webReady = true;
         }
 
@@ -200,6 +201,7 @@ namespace CyberOptix.Widgets
         {
             if (!_webReady || _web?.CoreWebView2 == null) return;
 
+            UpdateKeyFilter(false);
             if (id == "localllm")
             {
                 var url = AppSettings.Current.AiChatLocalLlmUrl;
@@ -210,6 +212,7 @@ namespace CyberOptix.Widgets
                 }
                 txtEmpty.Visibility = Visibility.Collapsed;
                 _web.Visibility = Visibility.Visible;
+                UpdateKeyFilter(true);
                 _web.CoreWebView2.Navigate(url);
                 return;
             }
@@ -233,15 +236,46 @@ namespace CyberOptix.Widgets
         private static bool HostMatches(string host, string approved) =>
             host.Length > 0 && (host == approved || host.EndsWith("." + approved, StringComparison.Ordinal));
 
-        /// <summary>Only the local LLM's own address accepts a bearer token, and only when one has been set for it.</summary>
+        private string? _keyFilter;
+        private string _llmKey = "";
+        private Uri? _llmBase;
+
+        /// <summary>
+        /// The local LLM's key is read (decrypted) once when its tab opens, and requests are only looked at for that address
+        /// (scheme, host and port), not for every request of every page.
+        /// </summary>
+        private void UpdateKeyFilter(bool forLocalLlm)
+        {
+            var core = _web?.CoreWebView2;
+            if (core == null) return;
+            if (_keyFilter != null)
+            {
+                try { core.RemoveWebResourceRequestedFilter(_keyFilter, CoreWebView2WebResourceContext.All); } catch { }
+                _keyFilter = null;
+            }
+            _llmKey = "";
+            _llmBase = null;
+            if (!forLocalLlm) return;
+
+            var s = AppSettings.Current;
+            if (!Uri.TryCreate(s.AiChatLocalLlmUrl, UriKind.Absolute, out var b)) return;
+            var key = SecretProtector.Unprotect(s.AiChatLocalLlmKeyEnc);
+            if (string.IsNullOrEmpty(key)) return;
+            _llmKey = key;
+            _llmBase = b;
+            _keyFilter = b.GetLeftPart(UriPartial.Authority) + "/*";
+            core.AddWebResourceRequestedFilter(_keyFilter, CoreWebView2WebResourceContext.All);
+        }
+
+        /// <summary>Only the local LLM's own address (same scheme, host and port) is sent the bearer token, and only when one has been set for it.</summary>
         private void WebResourceRequested(object? sender, CoreWebView2WebResourceRequestedEventArgs e)
         {
-            var key = SecretProtector.Unprotect(AppSettings.Current.AiChatLocalLlmKeyEnc);
-            if (string.IsNullOrEmpty(key)) return;
-            if (!Uri.TryCreate(AppSettings.Current.AiChatLocalLlmUrl, UriKind.Absolute, out var baseUri)) return;
-            if (!Uri.TryCreate(e.Request.Uri, UriKind.Absolute, out var reqUri)) return;
-            if (!string.Equals(reqUri.IdnHost, baseUri.IdnHost, StringComparison.OrdinalIgnoreCase)) return;
-            e.Request.Headers.SetHeader("Authorization", "Bearer " + key);
+            if (_llmBase == null || _llmKey.Length == 0) return;
+            if (!Uri.TryCreate(e.Request.Uri, UriKind.Absolute, out var req)) return;
+            if (!string.Equals(req.Scheme, _llmBase.Scheme, StringComparison.OrdinalIgnoreCase) ||
+                !string.Equals(req.IdnHost, _llmBase.IdnHost, StringComparison.OrdinalIgnoreCase) ||
+                req.Port != _llmBase.Port) return;
+            e.Request.Headers.SetHeader("Authorization", "Bearer " + _llmKey);
         }
 
         /// <summary>The microphone is granted without asking, but only to the five AI platforms and an approved local LLM address. Everything else is denied.</summary>
@@ -270,6 +304,12 @@ namespace CyberOptix.Widgets
         /// cookies set there carry straight back to the main tab. It closes itself once the site is done with it.</summary>
         private void NewWindowRequested(object? sender, CoreWebView2NewWindowRequestedEventArgs e)
         {
+            var wanted = e.Uri ?? "";
+            if (!wanted.StartsWith("https://", StringComparison.OrdinalIgnoreCase) && !wanted.StartsWith("about:blank", StringComparison.OrdinalIgnoreCase))
+            {
+                e.Handled = true;   // a link to anything but a secure web address opens nothing
+                return;
+            }
             var deferral = e.GetDeferral();
             e.Handled = true;
             var popup = new Window
@@ -284,6 +324,17 @@ namespace CyberOptix.Widgets
             {
                 if (t.IsFaulted || popupWeb.CoreWebView2 == null) { deferral.Complete(); popup.Close(); return; }
                 e.NewWindow = popupWeb.CoreWebView2;
+                var pc = popupWeb.CoreWebView2;
+                pc.Settings.AreDevToolsEnabled = false;
+                pc.Settings.AreHostObjectsAllowed = false;
+                pc.Settings.IsWebMessageEnabled = false;
+                pc.Settings.IsPasswordAutosaveEnabled = false;
+                pc.Settings.IsGeneralAutofillEnabled = false;
+                pc.NavigationStarting += (_, n) =>
+                {
+                    var u = n.Uri ?? "";
+                    if (!u.StartsWith("https://", StringComparison.OrdinalIgnoreCase) && !u.StartsWith("about:blank", StringComparison.OrdinalIgnoreCase)) n.Cancel = true;
+                };
                 popupWeb.CoreWebView2.WindowCloseRequested += (_, _) => popup.Close();
                 deferral.Complete();
                 popup.Show();

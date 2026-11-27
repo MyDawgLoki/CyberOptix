@@ -12,6 +12,7 @@
     <Version>1.0.0</Version>
     <Product>Glass Cursor</Product>
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <PathMap>$(MSBuildProjectDirectory)=/GlassCursor</PathMap>
   </PropertyGroup>
 
 </Project>

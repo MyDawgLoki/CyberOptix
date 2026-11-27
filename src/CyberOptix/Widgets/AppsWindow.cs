@@ -290,7 +290,7 @@ namespace CyberOptix.Widgets
             var autoRow = (StackPanel)_autoButton.Child;
             autoRow.Children.RemoveAt(1);
             autoRow.Children.Add(_autoText);
-            _autoButton.ToolTip = new TextBlock { Text = "When on, everything on your desktop (shortcuts, apps, files and folders) moves into this panel each time CyberOptix starts, so you do not have to press the button. Move To Desktop still puts it all back.", TextWrapping = TextWrapping.Wrap, MaxWidth = 300 };
+            _autoButton.ToolTip = new TextBlock { Text = "When on, everything on your desktop (shortcuts, apps, files and folders) moves into this panel each time CyberOptix starts, so you do not have to press the button. Shortcuts on the shared desktop (every account's) are left where they are. Move To Desktop still puts it all back.", TextWrapping = TextWrapping.Wrap, MaxWidth = 300 };
             _autoButton.MouseLeftButtonUp += (_, _) =>
             {
                 var s = CyberOptix.Models.AppSettings.Current;

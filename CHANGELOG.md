@@ -2,12 +2,14 @@
 
 Every release lists what is new, what was fixed and what changed. The same text is in the release notes on GitHub.
 
-## Unreleased
+## v1.0.6
 
 **New**
 - **AI Agents**: a new page, and a floating **Chat window** for Grok, Perplexity, ChatGPT, Claude and Gemini, plus your own local LLM. Each tab shows that platform's own sign-in and chat page (so its voice input and transcription are its own too, not rebuilt by CyberOptix), and the window sits in front of or behind other windows the same way an individual dock does ("Stay On Top", "Fall Behind Windows" or "Stick Behind Windows"). A **Local LLM** tab takes any web address you approve (for example a local Ollama or LM Studio web UI) and an optional API key, encrypted with Windows DPAPI and sent only to that address.
 
-## Unreleased
+**Changed**
+- The AI Agents Chat window is a little safer: it no longer saves passwords or form data, links that open a pop-up only open secure (https) addresses, and the Local LLM key is decrypted once when that tab opens and is only sent to that exact address (same scheme, host and port), not to every request of every page.
+- The Apps panel's start-up auto-move leaves shortcuts on the shared desktop (every account's) where they are; only your own desktop is moved in automatically. The button still offers the shared ones, with its warning.
 
 **Fixed**
 - Closing the Power flyout (Restart, Shut down) by clicking away or pressing Escape could log a harmless "window is closing" error in `crash.log`. It is ignored now.
@@ -16,6 +18,7 @@ Every release lists what is new, what was fixed and what changed. The same text 
 - With "Stay On Top Of Windows", "Let windows reach the top of the screen" and the taskbar replaced, the screen's work area was not kept clear of the hidden taskbar's strip. It is now checked for every layer.
 - "Let windows reach the top of the screen" is greyed out unless the dock replaces the taskbar and is set to Stay On Top Of Windows, because it does nothing otherwise.
 - With Windows' own taskbar setting **Hidden** (Automatically hide the taskbar) turned on, the taskbar flashed on the bottom of the screen and Explorer showed "A toolbar is already hidden on this side of your screen". CyberOptix was hiding the taskbar window while Windows was also showing and hiding it, so the two fought. While Windows' auto-hide is on, CyberOptix now leaves the taskbar to Windows (it stays hidden, and appears when the pointer touches the screen edge). With auto-hide off, CyberOptix hides it as before.
+- The Glass Cursor library in the download no longer carries the build folder's path (the drive letter and project folder) in its debug information.
 
 ## v1.0.5
 
