@@ -59,6 +59,7 @@ namespace CyberOptix.Pages
             cmbAppsOn.IsEnabled = s.DockAllDisplays;
             chkReplace.IsChecked = s.DockReplaceTaskbar;
             chkFloat.IsChecked = s.DockFloatOverWindows;
+            UpdateFloatEnabled();
             _loading = false;
 
             BuildExtras();
@@ -143,8 +144,17 @@ namespace CyberOptix.Pages
                 s.DockEnabled = true; // the dock has to be on to stand in for the taskbar
                 _loading = true; chkDock.IsChecked = true; _loading = false;
             }
+            UpdateFloatEnabled();
             AppSettings.Save();
             DockService.Apply();
+        }
+
+        /// <summary>"Let windows reach the top" only does anything while the dock replaces the taskbar and stays on top of windows, so it is greyed out otherwise.</summary>
+        private void UpdateFloatEnabled()
+        {
+            bool applies = chkReplace.IsChecked == true && cmbLayer.SelectedIndex == 0;
+            chkFloat.IsEnabled = applies;
+            chkFloat.Opacity = applies ? 1 : 0.5;
         }
 
         // ---------- border glow ----------

@@ -10,6 +10,10 @@ Every release lists what is new, what was fixed and what changed. The same text 
 ## Unreleased
 
 **Fixed**
+- The dock's three layer choices (**Stay On Top Of Windows**, **Fall Behind Windows**, **Stick Behind Windows**) could behave like Stick whenever an ordinary window was maximized. With the dock replacing the taskbar the whole screen is the work area, so a maximized window counted as "a game filling the screen" and pushed the dock behind everything, with no hover and no way to bring it forward except the Start menu. Only a frameless window that fills the screen (a game, a video player) counts now. The same check is used by the widgets and the live wallpaper.
+- On extra displays, docks set to Stick (or Fall) did not come forward with the Start menu. Every dock now does.
+- With "Stay On Top Of Windows", "Let windows reach the top of the screen" and the taskbar replaced, the screen's work area was not kept clear of the hidden taskbar's strip. It is now checked for every layer.
+- "Let windows reach the top of the screen" is greyed out unless the dock replaces the taskbar and is set to Stay On Top Of Windows, because it does nothing otherwise.
 - With Windows' own taskbar setting **Hidden** (Automatically hide the taskbar) turned on, the taskbar flashed on the bottom of the screen and Explorer showed "A toolbar is already hidden on this side of your screen". CyberOptix was hiding the taskbar window while Windows was also showing and hiding it, so the two fought. While Windows' auto-hide is on, CyberOptix now leaves the taskbar to Windows (it stays hidden, and appears when the pointer touches the screen edge). With auto-hide off, CyberOptix hides it as before.
 
 ## v1.0.5

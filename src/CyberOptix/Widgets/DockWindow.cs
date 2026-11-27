@@ -449,13 +449,14 @@ namespace CyberOptix.Widgets
             var s = AppSettings.Current;
             string layer = Layer;
             bool clampStart = !IsSecondary && (s.DockStartAtBottom || s.DockSearchAtBottom) && (s.DockReplaceTaskbar || layer != "Top");
-            if (layer == "Top" && !clampStart) return;   // nothing to watch
             if (Handle == IntPtr.Zero) return;
+            if (!IsSecondary && s.DockReplaceTaskbar) TaskbarTakeoverService.KeepWorkArea();   // for every layer (it was skipped for "Stay On Top")
+            if (layer == "Top" && !clampStart) return;   // nothing more to watch
 
             var now = DateTime.UtcNow;
-            if (!IsSecondary && s.DockReplaceTaskbar) TaskbarTakeoverService.KeepWorkArea();
-            IntPtr startWindow = IntPtr.Zero;
-            bool startOpen = !IsSecondary && StartMenuService.IsOpen(out startWindow);
+            // The Start menu brings every dock forward, on every display (the extra displays' docks used to ignore it, so "Stick Behind Windows"
+            // never came forward there). Only the main dock moves the Start menu itself.
+            bool startOpen = StartMenuService.IsOpen(out var startWindow);
 
             if (startOpen)
             {

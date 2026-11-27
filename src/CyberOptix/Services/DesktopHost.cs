@@ -106,6 +106,14 @@ namespace CyberOptix.Services
             {
                 coversScreen = r.Left <= mi.rcMonitor.Left && r.Top <= mi.rcMonitor.Top &&
                                r.Right >= mi.rcMonitor.Right && r.Bottom >= mi.rcMonitor.Bottom;
+                // With the dock standing in for the taskbar the work area is the whole screen, so an ordinary maximized window (it reaches a few
+                // pixels past the edge) covers the screen too. That is not a game: it must not push the dock into "Stick" behaviour (no hover, behind
+                // everything). A maximized window only counts when it has no frame at all, like a game or a video player filling the screen.
+                if (coversScreen && maximized)
+                {
+                    const int WS_CAPTION = 0xC00000, WS_THICKFRAME = 0x40000;
+                    if ((GetWindowLong(fg, -16) & (WS_CAPTION | WS_THICKFRAME)) != 0) coversScreen = false;
+                }
             }
         }
     }
