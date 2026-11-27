@@ -54,7 +54,7 @@ namespace CyberOptix.Widgets
             card.SetResourceReference(Border.BorderBrushProperty, "StrokeBrush");
             Content = card;
 
-            Deactivated += (_, _) => Close();
+            Deactivated += (_, _) => { try { Close(); } catch (InvalidOperationException) { } };   // losing focus while it is already closing (Escape, a click) is not an error
             KeyDown += (_, e) => { if (e.Key == Key.Escape) Close(); };
             Loaded += (_, _) => PlaceAbove(anchor);
         }

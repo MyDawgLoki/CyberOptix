@@ -10,6 +10,7 @@ Every release lists what is new, what was fixed and what changed. The same text 
 ## Unreleased
 
 **Fixed**
+- Closing the Power flyout (Restart, Shut down) by clicking away or pressing Escape could log a harmless "window is closing" error in `crash.log`. It is ignored now.
 - The dock's three layer choices (**Stay On Top Of Windows**, **Fall Behind Windows**, **Stick Behind Windows**) could behave like Stick whenever an ordinary window was maximized. With the dock replacing the taskbar the whole screen is the work area, so a maximized window counted as "a game filling the screen" and pushed the dock behind everything, with no hover and no way to bring it forward except the Start menu. Only a frameless window that fills the screen (a game, a video player) counts now. The same check is used by the widgets and the live wallpaper.
 - On extra displays, docks set to Stick (or Fall) did not come forward with the Start menu. Every dock now does.
 - With "Stay On Top Of Windows", "Let windows reach the top of the screen" and the taskbar replaced, the screen's work area was not kept clear of the hidden taskbar's strip. It is now checked for every layer.
